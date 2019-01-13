@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ICS 332 - Computer Architecture Overview Notes</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.css" integrity="sha384-xNwWFq3SIvM4dq/1RUyWumk8nj/0KFg4TOnNcfzUU4X2gNn3WoRML69gO7waf3xh" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.js" integrity="sha384-UP7zD+aGyuDvxWQEDSRYcvoTxJSD82C6VvuEBktJZGo25CVhDstY9sCDHvyceo9L" crossorigin="anonymous"></script>
+</head>
+<body>
+<a href="../Landing.html">Back to Home Page</a>
+<div id="computer-architecture-overview"></div>
+<script>
+  const converter = new showdown.Converter();
+  const note = '# Computer Architecture Overview\n' +
+      '## ENIAC\n' +
+      '* Electronic Numerical Integrator and Computer aka "Giant Brain"\n' +
+      '* First electronic general-purpose computer\n' +
+      '\n' +
+      '## Von Neumann Architecture Model\n' +
+      '1. **Central Processing Unit** *performs operations* and *controls the sequence of operations*\n' +
+      '2. **Memory Unit** contains *code* and data*\n' +
+      '3. **Input and Output (I/O)**\n' +
+      '\n' +
+      '![Icon](@attachment/1.png)\n' +
+      '\n' +
+      '## Memory Unit\n' +
+      '* Memory or RAM (Random Access Memory)\n' +
+      '* The memory is basically an indexed array of bytes\n' +
+      '* 1 Byte = 8 bits\n' +
+      '* The memory contains numerical data. The data are represented in memory in binary as bytes. \n' +
+      '* **Addresses** are unique binary bytes that contain the location of a data byte in memory. \n' +
+      '\n' +
+      '![Icon](@attachment/2.png)\n' +
+      '\n' +
+      '#### Example\n' +
+      '![Icon](@attachment/3.png)\n' +
+      '\n' +
+      '`Instruction: At address 1000 0000, store the address of the first \'9\' (0000 1001) in memory`\n' +
+      '* This action is called **indirection**\n' +
+      '* **Pointer/Reference** - The content at a memory location is the address of another memory location\n' +
+      '\n' +
+      '## Binary Instruction Encoding\n' +
+      '* **Assembler** - Transforms assembly code into binary code\n' +
+      '* Instructions are *encoded in binary*, based on the specification of the microprocessor your computer uses. aka "Opcode" \n' +
+      '\n' +
+      '![Icon](@attachment/4.png)\n' +
+      '\n' +
+      '* The program is stored in RAM/Memory *along with some data*\n' +
+      '* Once a program is loaded in memory, its **address space** contains both *code* and *data*\n' +
+      '\n' +
+      '![Icon](@attachment/5.png)\n' +
+      '\n' +
+      '#### How to Convert Binary to Integer:\n' +
+      '\n' +
+      '![Icon](@attachment/7.png)\n' +
+      '\n' +
+      '## Central Processing Unit (CPU)\n' +
+      '* The CPU reads data from memory into registers, writes data from registers to memory, and computes\n' +
+      '* The component that performs the computational operations is called the **ALU (Arithmetic and Logic Unit)**\n' +
+      '* Operands and results of operations must all be **in registers**\n' +
+      '* The CPU also *controls the execution of the program\'s instructions*\n' +
+      '* **Control Unit** - Component in charge of controlling program execution, and it uses dedicated *registers*:\n' +
+      '     * **Program Counter** - Contains the address of the next instruction that should be executed: is incremented after each instruction but can be set to whatever address when there is a change in control flow\n' +
+      '     * **Current Instruction** - The binary code of the instruction which is currently being executed.\n' +
+      '     * Other registers: Stack pointer, Frame pointer, ...\n' +
+      '* The Control Unit *decodes* the instructions (interprets their bits) and makes them happen.\n' +
+      '\n' +
+      '## Fetch-Decode-Execute Cycle\n' +
+      '1. The Control Unit *fetches* the next program instruction from memory using the program counter.\n' +
+      '2. The instruction is *decoded* and signals are sent to hardware components\n' +
+      '3. The instruction is *executed*:\n' +
+      '      * Values are fetched from memory and put in registers\n' +
+      '      * Computation is performed by the ALU and results are stored in registers\n' +
+      '      * Register values are pushed back to memory\n' +
+      '      * Program state is modified (Program Counter, Stack Pointer, ...)\n' +
+      '4. Repeat\n' +
+      '\n' +
+      '* The cycle is pipelined: Fetch the instruction `i + 1` while instruction `i` is being executed.\n' +
+      '\n' +
+      '### RAM is Slow\n' +
+      '* Biggest issue: *memory is slow* while *accessing a register is very fast*\n' +
+      '* "Von-Neumann Bottleneck" - CPU does *nothing* while waiting for memory to give data\n' +
+      '* We use a trick called **memory hierarchy** to provide the illusion of a fast memory.\n' +
+      '\n' +
+      '![Icon](@attachment/6.png)\n' +
+      '\n' +
+      '#### Cache\n' +
+      '* When a program accesses a byte in memory:\n' +
+      '      * It checks whether the byte is in cache, and if so, it just gets it.\n' +
+      '      * Otherwise, the byte value is brought from the (slow) memory into the (fast) cache.\n' +
+      '      * The values **around the byte** are also brought into the cache.\n' +
+      '* **Temporal Locality**\n' +
+      '> A program tends to reference addresses it has already referenced\n' +
+      '\n' +
+      '> The first access is expensive while each subsequent accesses are cheap (The value is in cache!)\n' +
+      '\n' +
+      '* **Spatial Locality**\n' +
+      '> A program tends to reference addresses next to addresses it has already referenced\n' +
+      '> The access to element *i* is expensive while access to elements *i* + 1, *i* + 2, ... are cheap (The value is in cache!)';
+  const html = converter.makeHtml(note);
+  const target = document.getElementById('computer-architecture-overview');
+  target.innerHTML = html;
+</script>
+</body>
+</html>
