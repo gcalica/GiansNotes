@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>ICS 332 - Computer Architecture Overview Notes</title>
+  <title>ICS 332 - Computer Architecture Overview</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.css" integrity="sha384-xNwWFq3SIvM4dq/1RUyWumk8nj/0KFg4TOnNcfzUU4X2gNn3WoRML69gO7waf3xh" crossorigin="anonymous">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.js" integrity="sha384-UP7zD+aGyuDvxWQEDSRYcvoTxJSD82C6VvuEBktJZGo25CVhDstY9sCDHvyceo9L" crossorigin="anonymous"></script>
 </head>
 <body>
 <a href="../index.html">Back to Home Page</a>
-<div id="computer-architecture-overview"></div>
+<div id="target"></div>
 <script>
   const converter = new showdown.Converter();
   const note = '# Computer Architecture Overview\n' +
@@ -99,7 +99,7 @@
       '> A program tends to reference addresses next to addresses it has already referenced\n' +
       '> The access to element *i* is expensive while access to elements *i* + 1, *i* + 2, ... are cheap (The value is in cache!)';
   const html = converter.makeHtml(note);
-  const target = document.getElementById('computer-architecture-overview');
+  const target = document.getElementById('target');
   target.innerHTML = html;
 </script>
 </body>

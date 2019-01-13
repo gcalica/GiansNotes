@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>18.1 - 18.2: Electric Charge, Conservation of Charge, Electric Force, Induced Charge; 18.6: Electrostatic Forces between Molecules</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<a href="../index.html">Back to Home Page</a>
+<div id="target"></div>
+<script>
+  const converter = new showdown.Converter();
+  const note = '# 18.1 - 18.2: Electric Charge, Conservation of Charge, Electric Force, Induced Charge; 18.6: Electrostatic Forces between Molecules\n' +
+      '<!-- \\\\( \\\\)-->\n' +
+      '## Electrostatics\n' +
+      '**Charge** - Electric charge exerts, and responds to, electric force like mass "" "" "" gravitational force\n' +
+      '**Types**:\n' +
+      '- Positive, carried by protons (p<sup>+</sup>)\n' +
+      '- Negative, carried by electrons (e<sup>-</sup>)\n' +
+      '\n' +
+      '**Neutral atom** - has equal number of protons and electrons\n' +
+      '**Ion** - Too few or too many electrons\n' +
+      '\n' +
+      '`Law of Conservation of Charge - The net electric charge created in any process is ZERO`\n' +
+      '**Conductors** \n' +
+      '> Have many loosely-bound or free electrons, positive charge, or ions\n' +
+      '> i.e. most metals, salt water, etc.\n' +
+      '\n' +
+      '**Insulators don\'t!**\n' +
+      '> Charge moves slowly or not at all\n' +
+      '> i.e. glass, most plastics, cloth, air, etc.\n' +
+      '\n' +
+      '### Electric Force\n' +
+      '`Paula Abdul\'s Law - Like charges repel; opposites attract`\n' +
+      '> In a *conductor*, like charges spread out to distribute themselves as far apart as possible\n' +
+      '> Any net charge will move to the surface.\n' +
+      '> In a *insulator*, charges stay where you put them\n' +
+      '\n' +
+      '> Coulomb\'s Law - Electric force between any 2 "point charges":\n' +
+      '> **Magnitude of F<sub>E</sub>**: \\\\(F_E = \\frac{k_e |q_1 \\cdot q_2|}{r^2}\\\\)\n' +
+      '\n' +
+      '\n' +
+      '> F<sub>E</sub> = force [N]\n' +
+      '> q<sub>1</sub> and q<sub>2</sub> = charges [C]\n' +
+      '> [C] = coloumb = MKS unit of charge\n' +
+      '\n' +
+      '> r = distance between q<sub>1</sub> and q<sub>2</sub> [m]\n' +
+      '> \\\\( k_e \\\\) = electrostatic constant or "Coloumb\'s Law constant"\n' +
+      '> \\\\( k_e = 8.988 \\cdot 10^9 \\frac{Nm^2}{C^2} \\\\)\n' +
+      '\n' +
+      '* *Note*: \\\\( k_e = \\frac{1}{4\\pi{\\epsilon}} \\\\) where \\\\( \\epsilon = 8.85 \\cdot 10^{-12} \\frac{C^2}{Nm^2} \\\\) "permutivity of free space"\n' +
+      '* Direction of \\\\( \\overrightarrow{F_E} \\\\) vector - either *attractive* or *repulsive*\n' +
+      '* Charge on one proton (or electron, if negative): \\\\( e = 1.602 x 10^{-19} C \\\\) "elementary charge"\n' +
+      '\n' +
+      'Notes about Coulomb\'s Law:\n' +
+      '1. I often write "k" as "k <sub>e</sub>" to prevent confusion with k<sub>E</sub>\n' +
+      '2. Write exactly for:\n' +
+      '1. point charges\n' +
+      '2. spherical charged bodies, where r = distance between centers\n' +
+      '3. Between the other inverse-square laws\n' +
+      '> If: r -> F_E\n' +
+      '> Means: 2r -> 1/4 F_E\n' +
+      '> 3r -> 1/9 F_E\n' +
+      '> 4r -> 1/16 F_E\n';
+  const html = converter.makeHtml(note);
+  const target = document.getElementById('target');
+  target.innerHTML = html;
+</script>
+
+<script>
+  renderMathInElement(document.body);
+</script>
+</body>
+</html>

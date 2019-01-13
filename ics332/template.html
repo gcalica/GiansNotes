@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ICS 332 - Title</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+</head>
+<body>
+<a href="../index.html">Back to Home Page</a>
+<div id="target"></div>
+<script>
+  const converter = new showdown.Converter();
+  const note = '';
+  const html = converter.makeHtml(note);
+  const target = document.getElementById('target');
+  target.innerHTML = html;
+</script>
+</body>
+</html>
