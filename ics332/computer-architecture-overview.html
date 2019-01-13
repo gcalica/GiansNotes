@@ -9,6 +9,8 @@
 </head>
 <body>
 <a href="../index.html">Back to Home Page</a>
+<i>This note was last edited on Jan/12/2019/ 4:30 PM</i>
+
 <div id="target"></div>
 <script>
   const converter = new showdown.Converter();
@@ -97,6 +99,7 @@
       '\n' +
       '* **Spatial Locality**\n' +
       '> A program tends to reference addresses next to addresses it has already referenced\n' +
+      '\n' +
       '> The access to element *i* is expensive while access to elements *i* + 1, *i* + 2, ... are cheap (The value is in cache!)';
   const html = converter.makeHtml(note);
   const target = document.getElementById('target');
