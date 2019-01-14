@@ -9,7 +9,7 @@
 </head>
 <body>
 <a href="../index.html">Back to Home Page</a>
-<i>This note was last edited on Jan/12/2019/ 4:30 PM</i>
+<i>This note was last edited on Jan/13/2019/ 9:12 PM</i>
 
 <div id="target"></div>
 <script>
@@ -57,6 +57,8 @@
       '\n' +
       '![Icon](@attachment/7.png)\n' +
       '\n' +
+      '![Icon](@attachment/8.png)\n' +
+      '\n' +
       '## Central Processing Unit (CPU)\n' +
       '* The CPU reads data from memory into registers, writes data from registers to memory, and computes\n' +
       '* The component that performs the computational operations is called the **ALU (Arithmetic and Logic Unit)**\n' +
@@ -80,6 +82,48 @@
       '\n' +
       '* The cycle is pipelined: Fetch the instruction `i + 1` while instruction `i` is being executed.\n' +
       '\n' +
+      '#### Example\n' +
+      '![Icon](@attachment/9.png)\n' +
+      '\n' +
+      '`What is the *decimal* value of register B when the program terminates?`\n' +
+      '\n' +
+      '##### Note that I do not accurately draw the process of updating the PC and CI visually. It is implied that the CI is updated with the content from Steps 2. And technically the PC is supposed to be updated with the next address as soon as the CI is updated. But in these drawings, I only update the PC after each drawing.\n' +
+      '\n' +
+      '![Icon](@attachment/10.png)\n' +
+      '1. In our initial state, the address `0000 0001` is already loaded into our *Program Counter* (PC). \n' +
+      '2. We look at the content of our address. `000` is our Opcode which stands for "Load to register A from memory"\n' +
+      '3. The entire content `000 10011` from Step 2 corresponds to the *pointer* `0001 0011`. Converting the content at this pointer address from binary gives us *135d*.\n' +
+      '4. We then load the content from Step 3 into register A.\n' +
+      '\n' +
+      'TL;DR: **A <-- 135d**\n' +
+      '\n' +
+      '![Icon](@attachment/11.png)\n' +
+      '1. We load address `0000 0010` into our PC.\n' +
+      '2. We look at the content of our address. `010` is our Opcode which stands for "Add B to A; store result in A". As stated in our Opcode instructions, we can ignore the 5-bit operand `00000`.\n' +
+      '3. We add the content in B to A. Currently, the content at B `0000 0110` converts to *6d*. Therefore, *6d* + *135d* = *141d*\n' +
+      '4. We store the results from Step 3 into register A.\n' +
+      '\n' +
+      'TL;DR: **A <-- 6d + 135d = 141d**\n' +
+      '\n' +
+      '![Icon](@attachment/12.png)\n' +
+      '1. We load address `0000 0011` into our PC.\n' +
+      '2. We look at the content of our address. `011` is our Opcode which stands for "Store the value of A to memory." Based on the 5-bit operand of our content, we are instructed to store this in the memory address `10111`.\n' +
+      '3. We store the current value of A, which is *141d*, into the address `0001 0111` which corresponds to `10111` from Step 2.\n' +
+      '\n' +
+      'TL;DR: **(0001 0111) <-- 141d**\n' +
+      '\n' +
+      '![Icon](@attachment/13.png)\n' +
+      '1. We load address `0000 0100` into our PC.\n' +
+      '2. We look at the content of our address. `001` is our Opcode which stands for "Load to register B from memory." \n' +
+      '3. The entire content of the address `001 10111` (Note that we ignore a missing 0 at the start because it doesn\'t matter in this step context) corresponds to the new memory address that we created from the previous drawing, `0001 0111`.\n' +
+      '4. We then store the content of the *pointer* address `0001 0111`, which is *141d* into register B.\n' +
+      '\n' +
+      'TL;DR: **B <-- (0001 0111) = 141d**\n' +
+      '\n' +
+      'The last address that we put into our PC is `0000 0101` which has the content `111 00000`. Our Opcode is `111` which Halts the program, and we can ignore the 5-bit operand. Therefore, our final state is:\n' +
+      '\n' +
+      '![Icon](@attachment/14.png)\n' +
+      '\n' +
       '### RAM is Slow\n' +
       '* Biggest issue: *memory is slow* while *accessing a register is very fast*\n' +
       '* "Von-Neumann Bottleneck" - CPU does *nothing* while waiting for memory to give data\n' +
@@ -100,7 +144,22 @@
       '* **Spatial Locality**\n' +
       '> A program tends to reference addresses next to addresses it has already referenced\n' +
       '\n' +
-      '> The access to element *i* is expensive while access to elements *i* + 1, *i* + 2, ... are cheap (The value is in cache!)';
+      '> The access to element *i* is expensive while access to elements *i* + 1, *i* + 2, ... are cheap (The value is in cache!)\n' +
+      '\n' +
+      '* There is more than one level of cache (L1, L2, L3)\n' +
+      '* L1 (closest/fastest to CPU) is split into **Data Cache** and **Instructions Cache**\n' +
+      '* **Chunks** of data are brought from (far-away) memory and are copied and kept around in (nearby) caches.\n' +
+      '* **Cache Hit** - When a data item is found in cache (e.g., "L2 cache hit")\n' +
+      '* **Cache Miss** - When a data item is not found in cache (e.g., "L1 cache miss")\n' +
+      '\n' +
+      '## Direct Memory Access (DMA)\n' +
+      '* **Direct Memory Access** is the action when the CPU is *doing something useful while the memory copy is taking place*\n' +
+      '* DMA Process:\n' +
+      '      1. CPU tells DMA controller to initiate a RAM copy\n' +
+      '      2. When copy is complete, the DMA controller tells the CPU "it\'s done" by generating an interrupt\n' +
+      '      3. In the meantime, the CPU was free to do whatever\n' +
+      '* The DMA controller uses the memory bus to perform data transfers. The code executed by the CPU likely also uses the memory bus. Therefore, they can interfere with each other. Regardless, using DMA leads to better performance.\n' +
+      '* Because we cannot increase clock rate further (power/heat issues), our current CPUs are **multi-core**\n';
   const html = converter.makeHtml(note);
   const target = document.getElementById('target');
   target.innerHTML = html;
