@@ -54,11 +54,17 @@
       '\n' +
       '![Icon](@attachment/5.png)\n' +
       '\n' +
-      '#### How to Convert Binary to Integer:\n' +
+      '#### How to Convert Binary to Decimal:\n' +
       '\n' +
       '![Icon](@attachment/7.png)\n' +
       '\n' +
       '![Icon](@attachment/8.png)\n' +
+      '\n' +
+      '#### How to Convert Decimal to Binary:\n' +
+      '\n' +
+      '![Icon](@attachment/15.png)\n' +
+      '\n' +
+      '*Note that the result is reverse of the computation*\n' +
       '\n' +
       '## Central Processing Unit (CPU)\n' +
       '* The CPU reads data from memory into registers, writes data from registers to memory, and computes\n' +
@@ -160,7 +166,7 @@
       '      2. When copy is complete, the DMA controller tells the CPU "it\'s done" by generating an interrupt\n' +
       '      3. In the meantime, the CPU was free to do whatever\n' +
       '* The DMA controller uses the memory bus to perform data transfers. The code executed by the CPU likely also uses the memory bus. Therefore, they can interfere with each other. Regardless, using DMA leads to better performance.\n' +
-      '* Because we cannot increase clock rate further (power/heat issues), our current CPUs are **multi-core**\n';
+      '* Because we cannot increase clock rate further (power/heat issues), our current CPUs are **multi-core**';
   const html = converter.makeHtml(note);
   const target = document.getElementById('target');
   target.innerHTML = html;
