@@ -10,7 +10,7 @@
 </head>
 <body>
 <a href="../index.html">Back to Home Page</a>
-<i>This note was last edited on Jan/14/2019/ 12:27 AM</i>
+<i>This note was last edited on Jan/14/2019 2:19 PM</i>
 
 <div id="target"></div>
 <script>
@@ -99,7 +99,7 @@
       '![Icon](@attachment/10.png)\n' +
       '1. In our initial state, the address `0000 0001` is already loaded into our *Program Counter* (PC). \n' +
       '2. We look at the content of our address. `000` is our Opcode which stands for "Load to register A from memory"\n' +
-      '3. The entire content `000 10011` from Step 2 corresponds to the *pointer* `0001 0011`. Converting the content at this pointer address from binary gives us *135d*.\n' +
+      '3. The entire content `000 10011` from Step 2 is a *pointer* that corresponds to another memory address `0001 0011`. Converting the content at this pointer address from binary gives us *135d*.\n' +
       '4. We then load the content from Step 3 into register A.\n' +
       '\n' +
       'TL;DR: **A <-- 135d**\n' +
@@ -122,7 +122,7 @@
       '![Icon](@attachment/13.png)\n' +
       '1. We load address `0000 0100` into our PC.\n' +
       '2. We look at the content of our address. `001` is our Opcode which stands for "Load to register B from memory." \n' +
-      '3. The entire content of the address `001 10111` (Note that we ignore a missing 0 at the start because it doesn\'t matter in this step context) corresponds to the new memory address that we created from the previous drawing, `0001 0111`.\n' +
+      '3. The entire content of the address `001 10111` (Note that we ignore a missing 0 at the start because it doesn\'t matter in this step context) is a *pointer* to the new memory address that we created from the previous drawing, `0001 0111`.\n' +
       '4. We then store the content of the *pointer* address `0001 0111`, which is *141d* into register B.\n' +
       '\n' +
       'TL;DR: **B <-- (0001 0111) = 141d**\n' +
