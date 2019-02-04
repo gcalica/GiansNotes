@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ICS 332 - Title</title>
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<a href="../index.html">Back to Home Page</a>
+<i>This note was last edited on Feb/03/2019 07:39 PM</i>
+
+<div id="target"></div>
+<script>
+  const converter = new showdown.Converter();
+  const note = '# 3. OS Overview\n' +
+      '* The OS is *not* a running program.\n' +
+      '* You do **not** need to "Reserve" one CPU/core for the OS.\n' +
+      '\n' +
+      '## The "three easy pieces" (Virtualization, Concurrency, and Persistence)\n' +
+      '### Virtualization\n' +
+      '* The main role of the OS is **virtualization**.\n' +
+      '* The OS is a **Resource Abstractor** - it defines a set of *logical resources* that correspond to *hardware resources*, and *well-defined operations* on these logical resources.\n' +
+      '      * CPU \\\\( \\leftrightarrow \\\\) Running Programs\n' +
+      '      * Memory \\\\( \\leftrightarrow \\\\) Data\n' +
+      '      * Storage Medium \\\\( \\leftrightarrow \\\\) Files\n' +
+      '* The OS is a **Resource Allocator** - it decides *who* (i.e., which running program) gets *how much* (e.g., CPU cycles, bytes of RAM), and *when*\n' +
+      '      * CPU \\\\( \\leftrightarrow \\\\) Should the currently program stop for a while? Which programs should run next? (e.g., to maximize CPU utilization)\n' +
+      '      * RAM \\\\( \\leftrightarrow \\\\) Where in RAM should a running program’s data be andwhen? (e.g., to minimize memory fragmentation)\n' +
+      '      * Storage \\\\( \\leftrightarrow \\\\) Where on “disk” should pieces of files be? (e.g., to minimize hard drive overhead)\n' +
+      '\n' +
+      '##### Virtualization - Why?\n' +
+      '> To make the computer easier to use/program\n' +
+      '\n' +
+      '##### Virtualization - How?\n' +
+      '* Resource Abstraction - The OS provides a **system call** API, i.e., an interface to all (virtualized) hardware resources\n' +
+      '* Resource Allocation\n' +
+      '\n' +
+      '#### Example\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-3-1.png)\n' +
+      '\n' +
+      '* This program prints an address. ANd you might think this is the actual address in RAM, but by running two instances of the program we can see that it cannot be an address in RAM.\n' +
+      '* The address that our program actually prints is a **virtual address**\n' +
+      '* Because of virtualization, each program instance has the illusion that it’s alone in *RAM*\n' +
+      '      * It doesn’t know whether other programs are running\n' +
+      '      * It never has to think “ooh... I shouldn’t write there in RAM because that address is used by another program”\n' +
+      '      * This is called **memory protection**\n' +
+      '* Because of virtualization, each program instnce has the illusion that it\'s alone in *CPU*\n' +
+      '      \n' +
+      '<hr/>\n' +
+      '* The mechanism by which a running program is kicked off the CPU and another one is brought in is called **context-switching**\n' +
+      '      * Context-switches are *really fast* and *really frequent*\n' +
+      '* **Multi-programming** - Having an arbitrary number of running programs at any time\n' +
+      '\n' +
+      '### Concurrency\n' +
+      '* **Concurrency** - Juggling many things at the same time\n' +
+      '\n' +
+      '### Persistence\n' +
+      '* **Persistence** - the ability to store data that survives a program termination / computer shutdown.\n' +
+      '      * This is done by the **file system**\n' +
+      '      \n' +
+      '## The OS Kernel\n' +
+      '* **Kernel** - refers to the part of the OS that is in charge of CPU, RAM, and "device" virtualization\n' +
+      '* The kernel is just *code* and *data* (it is **NOT** a running program)\n' +
+      '      * It always resides in memory\n' +
+      '* Again, the OS provides **memory protection**: each process thinks its alone and they never step on each other\'s toes\n' +
+      '\n' +
+      '## What happens when you turn on your Computer?\n' +
+      '1. POST (Power-On Self-Tests) are performed by the BIOS in firmware/ROM (Read-Only Memory)\n' +
+      '2. **Booting** - The BIOS runs a fist program: the *bootstrap program*\n' +
+      '3. The bootstrap program *initializes* the computer (register contents, device controller contents, ...)\n' +
+      '4. Then it loads another program in RAM, the **bootstrap loader**, and runs it\n' +
+      '5. The bootstrap loader loads (whole or part of) the *kernel* into RAM at a known/fixed address.\n' +
+      '      * It can then load another bootstrap loader, which can load more stuff into RAM, and call another loader, etc... (**chain loading**)\n' +
+      '6. At some point, a bootstrap loader creates and starts the first program (*init* on Linux, *launchd* on OS X)\n' +
+      '7. Then...*nothing* happens until an *event* occurs. (because it is *not* a running program)\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-3-2.png)\n' +
+      '\n' +
+      '* The *kernel* code and data reside in memory at a specified address, as loaded by the bootstrap program\n' +
+      '* From the picture, we can see that the kernel\'s memory footprint has to be small to work efficiently\n' +
+      '<br/>\n' +
+      '* A running program is called a **process**\n' +
+      '* InRAM, we have two kinds of code: User Code (code written by you) and Kernel Code\n' +
+      '* A process can run user code and kernel code by doing a **system call** (place a syscall to some kernel code, run that code, return to the user some code)\n' +
+      '\n' +
+      '\n' +
+      '## OS Events\n' +
+      '* **Event** - An "unexpected" change in the **control flow**\n' +
+      '* The event *interrupts* the execution of the currently running program and starts executing *kernel code*\n' +
+      '* The kernel defines a handler for each event type\n' +
+      '* THe kernel can be seen as **event handler**\n' +
+      '* Two kinds of events:\n' +
+      '      1. **Interrupts**: *Asynchronous* events\n' +
+      '      2. **Traps**: *Syncrhounous* events (also called *exceptions* or *faults*)\n' +
+      '* **Interrupts** - typically some device controller saying "some hardware thing happened" (e.g., "incoming data from keyboard")\n' +
+      '* **Traps** - typically caused by an instruction in a running program that requires immediate attention (e.g., "the running program tried to divide by 0")\n' +
+      '* System calls are really just events or procedure call in kernel code\n' +
+      '* Every ISA provdes a system call instruction, which causes a *trap* \n' +
+      '\n' +
+      '\n' +
+      '## Summary\n' +
+      '* OS is a resource abstractor and a resource allocator\n' +
+      '* Modern OSes allow multiprogramming via context-swtiching and memory protection\n' +
+      '* Kernel is code and data that always resides in RAM after boot\n' +
+      '* Kernel is not a running program; instead pieces of kernel code are executed to react to events\n' +
+      '* There are two kinds of events: asynchronous and synchronous\n' +
+      '* An important kind of trap are system calls, by which user programs get the kernel to do some work on their behalf';
+  const html = converter.makeHtml(note);
+  const target = document.getElementById('target');
+  target.innerHTML = html;
+</script>
+
+<script>
+  renderMathInElement(document.body);
+</script>
+</body>
+</html>
