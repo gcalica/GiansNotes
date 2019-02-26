@@ -11,12 +11,144 @@
 </head>
 <body>
 <a href="../index.html">Back to Home Page</a>
-<i>This note was last edited on Feb/25/2019 00:00 PM</i>
+<i>This note was last edited on Feb/25/2019 02:22 PM</i>
 
 <div id="target"></div>
 <script>
   const converter = new showdown.Converter();
-  const note = '';
+  const note = '# 4. Threads\n' +
+      '## Concurrent Computing\n' +
+      '* **Concurrent Computing** - several operations are performed during overlapping time periods\n' +
+      '* **Concurrency** - A feature of a program that can do multiple things "At the same time"\n' +
+      '* A program is *concurrent* if it consists of units that can be executed independently. \n' +
+      '\n' +
+      '### What is Concurrency used for?\n' +
+      '* Make programs faster\n' +
+      '* To make programs more responsive\n' +
+      '\n' +
+      '<hr/>\n' +
+      '*Remember, because the OS virtualizes memory, processes don\'t share memory naturally*\n' +
+      '*So how do we program processes that have cooperative behavior? We use **Threads***\n' +
+      '\n' +
+      '## Threads\n' +
+      '* A **thread** is a basic unit of CPU utilization within a process\n' +
+      '* Multi-threaded process: Concurrent execution of different parts of the same running program\n' +
+      '* Each thread has its own thread ID, program counter, registers set, and stack.\n' +
+      '* It also *shares* with other threads in the same process\n' +
+      '      * Code/text section\n' +
+      '      * Data segment\n' +
+      '      * List of open file descriptors\n' +
+      '      * Heap\n' +
+      '      * Signal Behaviors\n' +
+      '* Threads can execute **different** or **same** parts of code.\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-5-1.png)\n' +
+      '\n' +
+      '## Advantages of Threads vs Processes\n' +
+      '* Resource Sharing\n' +
+      '      * Threads "naturally" share memory\n' +
+      '      * Provides a direct SHared Memory IPC mechanism\n' +
+      '* Economy\n' +
+      '      * Creating a thread is cheap--Slightly cheaper than creating a process in OSX/Linux; Much cheaper than creating a process in Windows\n' +
+      '      * Context-switching between threads is cheaper than between processes\n' +
+      '      * What you can do with processes, you can do with threads faster\n' +
+      '      * In old OSes(Solaris 4), threads were called *lightweight processes*\n' +
+      '\n' +
+      '## Drawbacks of Threads vs Processes\n' +
+      '* If one thread fails with an error/exception which is not managed, all threads (and therefore the whole process fails)\n' +
+      '* Threads may be more memory-constrained than processes\n' +
+      '* Threads do not benefit from memory protection (Since you want them to see the same memory)\n' +
+      '   \n' +
+      '## User Threads vs Kernel Threads\n' +
+      '* Threads can be supported solely in User Space (**User Threads**)\n' +
+      '* Main advantage of User Threads is *low overhead* (because no syscalls)\n' +
+      '* User Threads have several drawbacks:\n' +
+      '      * If oen thread blocks, all other threads block\n' +
+      '      * All threads run on the same core (because the OS doesn\'t know that there are threads within a process)\n' +
+      '* For these reasons, User Threads are *no longer* heavily used\n' +
+      '* All OSes today provide support for threads (**Kernel Threads**)\n' +
+      '\n' +
+      '#### Thread Libraries:\n' +
+      '* C/C++: Pthreads\n' +
+      '* C/C++: OpenMP (layer above Pthreads)\n' +
+      '* Java: Java threads (implemented by the JVM, which relies on Pthreads)\n' +
+      '* Python: threading / multiprocessing packages \n' +
+      '* JavaScript: no multithreading (multiprocessing is performed by the "Web application")\n' +
+      '\n' +
+      '## Java Threads\n' +
+      '**Ways to create threads in Java:**\n' +
+      '* Thread class\n' +
+      '* Runnable interface\n' +
+      '* Callable interface\n' +
+      '* ExecutorService interface\n' +
+      '\n' +
+      '### The Thread class\n' +
+      '* Using the **Thread class:** Implementing a subclass that extends Thread\n' +
+      '* Override the run() method and call the (never overriden) start() method to start the thread.\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-5-2.png)\n' +
+      '\n' +
+      '### The Runnable interface\n' +
+      '* Implements the Runnable interface\n' +
+      '* Override the run() method and call the (never overriden) starT() method to start the thread.\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-5-3.png)\n' +
+      '\n' +
+      'One Liner:\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-5-4.png)\n' +
+      '\n' +
+      '### The Callable interface\n' +
+      '* Implements the Callable interface\n' +
+      '* Override the call() method, add a return type, and checked exception to call()\n' +
+      '* Start the thread through an ExecutorService\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-5-8.png)\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-5-9.png)\n' +
+      '\n' +
+      '<hr/>\n' +
+      '### Java Thread Example\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-5-5.png)\n' +
+      '\n' +
+      '* When the start() method is called, the main thread creates a new thread giving us two threads in total.\n' +
+      '* Both threads are running:\n' +
+      '      * Main thread does not do anything\n' +
+      '      * New thread prints a bunch of 1s to the terminal.\n' +
+      '* **In Java, the program terminates only when all your threads terminate**\n' +
+      '      * The main thread terminates when it returns from main()\n' +
+      '      * The new thread terminates when it returns from run()\n' +
+      '* If we also put a FOR loop to run inside the main thread, the output would be impossible to guess because it would be **non-deterministic**\n' +
+      '* Deciding when a thread runs is called **thread scheduling**\n' +
+      '\n' +
+      '## Multi-Threading Programming Challenges\n' +
+      '* **Major Challenge**: You cannot make any assumption about thread scheduling since the OS is in charge\n' +
+      '* **Major Difficulty**: You may not be able to reporudce a bug because each execution is different (non-deterministic)\n' +
+      '\n' +
+      '## Java Thread States\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-5-6.png)\n' +
+      '\n' +
+      '#### versus Process States\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-5-7.png)\n' +
+      '\n' +
+      '## Java Thread Cancellation\n' +
+      '* It is not possible to perform an **asynchronous cancellation** of a thread (i.e., a thread tells another thread to stop)\n' +
+      '* In other words, **you cannot kill a Java thread**\n' +
+      '* Instead, you can do **deferred cancellation** (the thread has to periodically check whether it should terminate)\n' +
+      '\n' +
+      '## Miscellanous Java Thread Functions\n' +
+      '* Given a Thread object, calling its **join()** method means "Waiting for that thread to terminate \n' +
+      '      * This is an example of thread synchronization\n' +
+      '      * When using an ExecutorService object, the method is **awaitTermination()**\n' +
+      '* In Java, a thread can call **Thread.yield()** which says "I am willingly giving up the CPU now" (execution of a program is still non-deterministic even with this call)\n' +
+      '* In Java, the Thread class has a **setPriority()** and **getPriority()** methods to set priorities to Threads using integers; the greater the integer, the higher the priority\n' +
+      '\n' +
+      '## Linux/MacOS X THreads\n' +
+      '* Linux does not distinguish between processes and threads: they are all called **tasks**\n' +
+      '* The *clone()* syscall is used to create a task.\n';
   const html = converter.makeHtml(note);
   const target = document.getElementById('target');
   target.innerHTML = html;
