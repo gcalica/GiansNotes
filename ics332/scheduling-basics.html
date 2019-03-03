@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ICS 332 - Module 6 (Scheduling Basics)</title>
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<a href="../index.html">Back to Home Page</a>
+<i>This note was last edited on Mar/03/2019 1:14 AM</i>
+
+<div id="target"></div>
+<script>
+  const converter = new showdown.Converter();
+  const note = '# 6. Scheduling Basics\n' +
+      '\n' +
+      '*Note: Jobs is also a term used to mean processes or thread for these notes*\n' +
+      '\n' +
+      '## CPU Scheduling\n' +
+      '* **CPU Scheduling** - The process by which the OS decides which processes/threads should run (and for how long)\n' +
+      '* Only *READY* processes/threads can be scheduled\n' +
+      '* The *policy* - the **scheduling strategy**\n' +
+      '      * Broad goal is to improve system performance and productivity, including:\n' +
+      '      * **Maximizing CPU Utilization**\n' +
+      '      * **Making jobs "happy"**\n' +
+      '* The *mechanism* - the **dispatcher**\n' +
+      '      * OS component that knows how to switch between jobs on the CPU (implements context-switching)\n' +
+      '      * It must be fast\n' +
+      '\n' +
+      '## Long-term vs Short-term Scheduling\n' +
+      '* **Long-Term Scheduler**\n' +
+      '      * Selects jobs from a submitted pool of jobs and loads them to memory\n' +
+      '      * Orchestrate jobs executions in the long term (minutes, hours, ...)\n' +
+      '      * Executed every (10 minutes, hour, ...)\n' +
+      '      * Can construct complex schedules\n' +
+      '      * Uses sohpsticated decision algorithms\n' +
+      '      * *Long-Term Scheduling: done by **non-OS software (Job Schedulers)***\n' +
+      '* **Short-Term Scheduler**\n' +
+      '      * Selects already-in-memory jobs\n' +
+      '      * Orchestrate jobs executions in the very short term (next 1000ths of seconds)\n' +
+      '      * Executed every (10\'s of milliseconds, ...)\n' +
+      '      * Cannot make complex decision\n' +
+      '      * Uses simple decision algorithms\n' +
+      '      * *Short-Term Scheduling: done by **OSes (CPU Scheduler)***\n' +
+      '      \n' +
+      '## CPU or I/O Burst Cycles\n' +
+      '* Most jobs alternate between CPU and I/O activities called **CPU bursts** and **I/O bursts**\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-6-1.png)\n' +
+      '\n' +
+      '## CPU-bound or I/O-bound jobs\n' +
+      '* **CPU-bound job**: a job that is mostly using the CPU with mostly (possibly many) short I/O bursts\n' +
+      '* **I/O-bound job**: a job that is mostly waiting for I/O with mostly (possibly many) short CPU bursts\n' +
+      '\n' +
+      '## Job Turnaround Time\n' +
+      'A metric that owners of CPU-bound jobs care about is **job turnaround time**\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-6-2.png)\n' +
+      '\n' +
+      '### First Come First Serve Algorithm (FCFS or FIFO)\n' +
+      '* Assume we have 3 jobs, *A*, *B*, and *C*, each running for 10 seconds\n' +
+      '* These jobs are in some order in the Queue, say, *A*, *B*, and *C*\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-6-3.png)\n' +
+      '\n' +
+      '* The average turnaround time is: \\\\( \\widehat{T}_{\\text{turnaround}} = \\frac{10+20+30}{3} = 20 \\\\)\n' +
+      '* This is only 2x more than the average job duration\n' +
+      '\n' +
+      '#### Problem with FCFS: Convoy Effect\n' +
+      '* Assume we have the same 3 jobs, but *A* takes 100 seconds\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-6-4.png)\n' +
+      '\n' +
+      '* The average turnaround time is: \\\\( \\widehat{T}_{\\text{turnaround}} = \\frac{100+110+120}{3} = 110 \\\\)\n' +
+      '* This is 2.75x more than the average job duration!\n' +
+      '* This is the **Convoy Effect** - "Stuck behind somebody with a full cart at the supermarket" problem\n' +
+      '\n' +
+      '### Shortest Job First Algorithm (SJF)\n' +
+      '* We can fix our Convoy Effect problem by sorting: dispatch shortest jobs first\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-6-5.png)\n' +
+      '\n' +
+      '* The average turnaround time is: \\\\( \\widehat{T}_{\\text{turnaround}} = \\frac{10+20+120}{3} = 50 \\\\)\n' +
+      '* Therefore, this is *optimal* for our assumptions\n' +
+      '\n' +
+      '#### SJF with Jobs Arriving at Different Times\n' +
+      '* Say *A* arrives at time 0, and *B* and *C* arrive at time 10\n' +
+      '* At time 0, we *have* to dispatch job *A*\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-6-6.png)\n' +
+      '\n' +
+      '* The average turnaround time is: \\\\( \\widehat{T}_{\\text{turnaround}} = \\frac{100+(110-10)+(120-10)}{3} = 103.33 \\\\)\n' +
+      '* Jobs *B* and *C* are "unhapopy" ("Got to the checkout lane just after somebody with a full cart" problem)\n' +
+      '\n' +
+      '#### Solution: Preempting Jobs\n' +
+      '* We need to remove the assumption of "Once started, each job runs to completion.\n' +
+      '* Rather, we assume that the OS can **preempt** jobs\n' +
+      '* **Shortest Time-to-Completion First** Algorithm (STCF)\n' +
+      '      * Whenever a job arrives, if it has shorter time-to-completion than the running job, then preempt the running job and run the new job\n' +
+      '      * Whenever a job finishes, run the job with the shortest time-to-completion\n' +
+      '      * ![Icon](@attachment/ics332-6-7.png)\n' +
+      '      * The average turnaround time is: \\\\( \\widehat{T}_{\\text{turnaround}} = \\frac{(120-0)+(20-10)+(30-10)}{3} = 50 \\\\)\n' +
+      '      * Solves the "Stuck behind big cart at the "supermarket" problem\n' +
+      '      * Turns out that **STCF** is *optimal* for average turn-around time when *jobs can be preempted*\n' +
+      '      * And **SJF** is *optimal* for average-turn around time when *jobs cannot be preempted*\n' +
+      '* But STCF gives us the **starvation problem** - a job may never run\n' +
+      '* Meaning that a stream of "short" jobs can forever overtake a long job ("Somebody with a full cart at the supermarket is inline, and every minute somebody arrives to buy just a banana"\n' +
+      '* And this makes it even harder because **we do NOT know job execution times**\n' +
+      '\n' +
+      '## Round-Robin (RR)\n' +
+      '* We can solve the *starvation problem* with **Roound-Robin** - let a job run for at most a little bit, then preempt it, then run the next job\n' +
+      '* The (maximum) amount of time a job runs for before preemption is called **time slice, time quantum, or scheduling quantum**\n' +
+      '* Example: 3 jobs, *A*, *B*, and *C*, arrive at the same time and wish to run for 5s, and our time quantum is 1s:\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-6-8.png)\n' +
+      '\n' +
+      '* New Metric of "goodness": **Response Time**\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-6-9.png)\n' +
+      '\n' +
+      '## Time Quantum\n' +
+      '* **Time Quantum too large**: poor response time\n' +
+      '* **Time Quantum too small**: too much context-switching overhead\n' +
+      '\n' +
+      '## Summary of Turnaround Time vs Response Time\n' +
+      '* Turn-around time is a reasonable metric, especially if we allow jobs to be preempted\n' +
+      '* But turn-around time is impossible to optimize if we don\'t know the job durations\n' +
+      '* Instead, we can focus on response time and use Round Robin\n' +
+      '* Algorithms that are good for turnaround time are typically not good for response time, and conversely\n' +
+      '\n' +
+      '<hr/>\n' +
+      '\n' +
+      '* Each job alternates between CPU bursts and I/O bursts\n' +
+      '* But if we do nothing about this, the CPU could be idle which is poor use of resources\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-6-10.png)\n' +
+      '\n' +
+      '## Dealing with I/O\n' +
+      '* When a job issues an I/O operation, it *vacates the CPU*\n' +
+      '* When the I/O operation completes, the *job is back in the Ready Queue and will be given the CPU at some point in the future*\n' +
+      '* Example with 10ms time quantum, and 10 ms I/O and CPU bursts for job *A*:\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-6-11.png)\n' +
+      '* Essentially, **each CPU burst is treated as a job**\n';
+  const html = converter.makeHtml(note);
+  const target = document.getElementById('target');
+  target.innerHTML = html;
+</script>
+
+<script>
+  renderMathInElement(document.body);
+</script>
+</body>
+</html>
