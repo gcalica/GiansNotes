@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ICS 332 - Module 4 (Process Abstraction)</title>
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<a href="../index.html">Back to Home Page</a>
+<i>This note was last edited on Mar/04/2019 08:48 PM</i>
+
+<div id="target"></div>
+<script>
+  const converter = new showdown.Converter();
+  const note = '# 4. Process Abstraction\n' +
+      '## Definition\n' +
+      '* **Process** - OS abstraction to virtualize the CPU\n' +
+      '* In practice, a *process is a program in execution*\n' +
+      '      - Program: passive entity (bytes stored on disk as part of an executable file)\n' +
+      '      - A program becomes a process when it is loaded into memory\n' +
+      '* Multiple processes can be associated to the same program\n' +
+      '\n' +
+      '## A Process is defined by...\n' +
+      '* The program, or **code** (also called *text*)\n' +
+      '* The program (static) **data**\n' +
+      '* **Content of all registers**\n' +
+      '      - They represent the current state of the CPU in the current fetch-decode-execute cycle\n' +
+      '      - This includes the program counter\n' +
+      '* **Heap**\n' +
+      '* **Runtime stack**\n' +
+      '* **Page table**\n' +
+      '\n' +
+      '### Process Address Space\n' +
+      '* Code + Data + Heap + Stack defines the **Process Address Space**\n' +
+      '* Each time a method/procedure/function is called, an activation record is pushed on the stack. When it ends, the activation record is popped.\n' +
+      '* Each time a new object is created it is allocated in the heap. When it is destroyed, it is deallocated.\n' +
+      '* Going over stack size limit is called **Runtime Stack Overflow**\n' +
+      '\n' +
+      '![](@attachment/ics332-4-1.png)\n' +
+      '\n' +
+      '![](@attachment/ics332-4-2.png)\n' +
+      '\n' +
+      '#### The Heap\n' +
+      '* New objects/structures/arrays are created on the Heap\n' +
+      '* *malloc* in C; *new* in Java/C++/C#\n' +
+      '\n' +
+      '#### The Runtime Stack\n' +
+      '* A stack where items can be pushed or popped\n' +
+      '* Management of the stack is done entirely by the compiler/JVM\n' +
+      '* Items on the stacked are pushed/popped in groups, or **activation records**\n' +
+      '* An activation record contains all the bookkeeping necessary for placing and returning from one method call\n' +
+      '* The Kernel has to implements its own stack management and to save space it has a **fixed-size stack** and it is very small.\n' +
+      '\n' +
+      '##### Activation Record\n' +
+      '* When a method/procedure is called:\n' +
+      '      * **Register values** of the caller need to be saved in RAM somewhere, so that the callee can use the registers freely, and the caller\'s registers values can be restored once the callee returns saved\n' +
+      '      * The **return address**, i.e., the address of the instruction to return to, needs to be saved in RAM somewhere\n' +
+      '      * The **paramters of the callee** need to be stored in RAM somewhere\n' +
+      '      * The **local variables of the callee** have to be stored in RAM somewhere\n' +
+      '* The above items together are called an **activation record** (or **stack frame** or **activation frame**)\n' +
+      '* The "somewhere in RAM" above is **on the stack**\n' +
+      '\n' +
+      '## Process Life Cycle\n' +
+      '* Each process goes through a **lifecycle**\n' +
+      '* This term (in computer science) means that:\n' +
+      '      * A process can be in a finite number of different **states**\n' +
+      '      * There are allowed **transitions** between some pairs of states\n' +
+      '      * THere transitions happen when some event occurs\n' +
+      '\n' +
+      '#### Single-Tasking OSes\n' +
+      '* OSes used to be **single-tasking** - only one process can be in memory at a time\n' +
+      '\n' +
+      'Single-Tasking with MS-DOS\n' +
+      '\n' +
+      '![](@attachment/ics332-4-4.png)\n' +
+      '\n' +
+      'Single-Tasking OS Process Lifecycle\n' +
+      '\n' +
+      '![](@attachment/ics332-4-3.png)\n' +
+      '\n' +
+      '## Multi-Tasking (a.k.a. Multi-Programming)\n' +
+      '* Modern OSes support **multi-tasking** - multiple processes can co-exist in memory\n' +
+      '* When you run a program, you really place a system call to the OS asking it to create a new process\n' +
+      '* When a process terminates, the OS reclaims its memory, which can be allocated to another process later\n' +
+      '* All processes have their own **separate** address space (RAM virtualization)\n' +
+      '\n' +
+      '![](@attachment/ics332-4-5.png)\n' +
+      '\n' +
+      '## The "Ready" State\n' +
+      '* With Multi-Tasking, assuming a single CPU, we can have many processes in RAM that *could run* but only one can run\n' +
+      '* Therefore, a process can be *ready to run* but not currently running\n' +
+      '* The OS picks a process to run for a while: it "schedules" it\n' +
+      '* Later the process vacates the CPU: it is "de-scheduled"\n' +
+      '* The OS then picks another process to run\n' +
+      '* This is how the OS virtualizes the CPU so that each process "thinks" it\'s alone on the CPU\n' +
+      '* Thefore, we need a new state in the lifecycle: The **Ready** state\n' +
+      '\n' +
+      '![](@attachment/ics332-4-6.png)\n' +
+      '\n' +
+      '## Process Control Block\n' +
+      'The OS uses a data structure to keep track of a process--**Process Control Block (PCB)**:\n' +
+      '* Process state\n' +
+      '* Process ID (aka PID)\n' +
+      '* User ID\n' +
+      '* Saved Register Values (include PC)\n' +
+      '* CPU_scheduling information\n' +
+      '* SOme Memory-management information\n' +
+      '* Accounting information (amount of hardware resources used so far)\n' +
+      '* I/O status info\n' +
+      '* ... and a lot of other things\n' +
+      '\n' +
+      '## Process Table\n' +
+      '* The OS has in memory (in the Kernel space) one PCB per process\n' +
+      '* A new PCB is created each time a new process is created and destroyed each time a process terminates\n' +
+      '* The OS keeps a "list" of PCBs: the **Process Table**\n' +
+      '* Because the Kernel size is bounded, so is the Process Table\n';
+  const html = converter.makeHtml(note);
+  const target = document.getElementById('target');
+  target.innerHTML = html;
+</script>
+
+<script>
+  renderMathInElement(document.body);
+</script>
+</body>
+</html>
