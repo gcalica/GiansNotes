@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ICS 332 - Module 6 (Advanced Scheduling)</title>
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<a href="../index.html">Back to Home Page</a>
+<i>This note was last edited on Mar/04/2019 02:26 PM</i>
+
+<div id="target"></div>
+<script>
+  const converter = new showdown.Converter();
+  const note = '# 6. Advanced Scheduling\n' +
+      '## Multi-Level Feedback Queue (MLFQ)\n' +
+      '* Previous problem with Round Robin\'s time quantum\n' +
+      '      * interactive jobs want a small time-quantum, and CPU-bound want a large time-quantum\n' +
+      '      * interactive jobs can get stuck in the Ready Queue behind a bunch of CPU-intensive jobs\n' +
+      '* Multi-Level Feedback Queue\'s Solution: \n' +
+      '      * interactive jobs should get the CPU as soon as they want it\n' +
+      '      * Use priority levels and use **one Round-Robin queue per level**\n' +
+      '      * ![](@attachment/ics332-6-12.png)\n' +
+      '\n' +
+      '## Multi-Level Feedback Queue\'s Priorities\n' +
+      '* If Priority(A) > Priority(B), then A runs \n' +
+      '* If Priority(A) = Priority(B), then A and B run in a Round-Robin\n' +
+      '* Ideally, interactive jobs should be in high priority queues\n' +
+      '* Remember, once a job does I/O it is no longer in the Ready Queue\n' +
+      '* We also want jobs to be promoted/demoted to higher queues when they start/stop being less/more interactive\n' +
+      '\n' +
+      '### Priority Queues\n' +
+      '* When a job first shows up, we put it in the highest priority queue (we assume that it is interactive first)\n' +
+      '* However, we a way to demote these jobs.\n' +
+      '* Key Insights:\n' +
+      '      * Interactive jobs do **not** use their time quantu fully because they always have short CPU bursts\n' +
+      '      * CPU-intensive, non-interactive jobs use their time quantu fully because they always have long CPU bursts\n' +
+      '* Using this information, if a job uses its full time quantum then it is demoted because it is deemed non-interactive job.\n' +
+      '* Otherwise, if a job does not use its full time quantum then it stays at the same priority level\n' +
+      '\n' +
+      '#### MLFQ Simple Example\n' +
+      '\n' +
+      '![](@attachment/ics332-6-13.png)\n' +
+      '\n' +
+      '\n' +
+      '* From this example we can see that the MLFQ gives the interactive jobs (gray bars) the CPU whenever it wants it\n' +
+      '* **A higher priority job always preempets a lower priority job**\n' +
+      '\n' +
+      '## Multi-Level Feedback Queue Starvation Problem and Paramter Problem\n' +
+      '* A clear problem with MLFQ is **starvation**- a CPU-bound job may never run which can happen if we have a lot of interactive jobs\n' +
+      '* Solution: every *S* seconds, move all the jobs to the priority queue, and let them trickle back down\n' +
+      '* This is called a **Priority Boost**\n' +
+      '\n' +
+      '![](@attachment/ics332-6-14.png)\n' +
+      '\n' +
+      '* Another problem with MLFQ is that there are too many queues:\n' +
+      '      * How many queues?\n' +
+      '      * What time quantum for each queue?\n' +
+      '      * What to use for *S*?\n' +
+      '* People have typically experimented with these\n' +
+      '* Typical approach: larger time quantum for lower-priority queues\n' +
+      '\n' +
+      '## Multi-Processor Scheduling\n' +
+      '* All our processors are multi-core, so OSes need to do multiple scheduling across cores which can lead to this problem:\n' +
+      '\n' +
+      '![](@attachment/ics332-6-16.png)\n' +
+      '\n' +
+      '* From this picture, the problem is that **having jobs jump around cores make cache use inefficient**\n' +
+      '\n' +
+      '### Multi-Core architectures\n' +
+      '* One multi-core architecture example is having 2 CPUs with caches share the same memory.\n' +
+      '* A job runs on Core #1 and has its data in the cache; this experiences a lot of cache hits, which is good\n' +
+      '* However once Core #2 gets scheduled it will experience many cache misses--terrible performance.\n' +
+      '* Worst case: jobs keep bouncing between cores and it\'s almost as if you had no cache. \n' +
+      '\n' +
+      '### Scheduling for Cache Affinity\n' +
+      '* Each job has some **affinity** to some core: the core at which it has some data in the cache\n' +
+      '* Most modern OSes ensure that jobs are scheduled on cores while taking affinity into account\n' +
+      '\n' +
+      '![](@attachment/ics332-6-15.png)\n' +
+      '\n' +
+      '* Job E bounces around, but other jobs stay put on the same core that they have affinity to, which is good performance.\n' +
+      '\n' +
+      '## Linux Scheduling\n' +
+      'Well-known Linux scheduling algorithms:\n' +
+      '* O(1) Scheduler: multiple queues, tricks to make quick decisions, accounting of CPU usage by each job, akin to MLFQ\n' +
+      '* CFS (Completely Fair Scheduler): stores jobs in a read-black tree instead of queues, implements proportional-share approach for fairness \n' +
+      '* BFS (BF Scheduler): simple algorithm, single queue, also focused on fairness\n' +
+      '\n' +
+      'The default has been CFS\n';
+  const html = converter.makeHtml(note);
+  const target = document.getElementById('target');
+  target.innerHTML = html;
+</script>
+
+<script>
+  renderMathInElement(document.body);
+</script>
+</body>
+</html>
