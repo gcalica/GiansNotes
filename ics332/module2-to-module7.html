@@ -630,7 +630,124 @@
   target.innerHTML += html6;
 
   // Inter-Process Communication (IPC)
-  const note7 = '';
+  const note7 = '# 4. Inter-Process Communication (IPC)\n' +
+      '## COmmunicating Processes?\n' +
+      '* So far we have seen independent processes\n' +
+      '      * Each process runs code independently\n' +
+      '      * Parents are aware of their children, and children are aware of their parents, but they do not interact\n' +
+      '* But often we need processes to cooperate\n' +
+      '      * To share information\n' +
+      '      * To speed up computation\n' +
+      '      * Because it\'s covenient\n' +
+      '* The means of communication between cooperating processes is called **Inter-Process COmmunication (IPC)**\n' +
+      '\n' +
+      '## Communication Models\n' +
+      '\n' +
+      '![](@attachment/ics332-4-27.png)\n' +
+      '\n' +
+      '### Pros and COns\n' +
+      '\n' +
+      '![](@attachment/ics332-4-28.png)\n' +
+      '\n' +
+      '* There are two fundamental system calls to *message passing*: **send** and **receive**\n' +
+      '\n' +
+      '## Direct vs Indirect COmmunication\n' +
+      '* **Direct Communication**: sends and receives\n' +
+      '      * When sending, the message target is explicit:\n' +
+      '      * When receiving, the message source is explicit\n' +
+      '* **Indirect Communication**: mailboxes\n' +
+      '      * A mailbox is an opaque ID\n' +
+      '      * One sends and receive to/from a mailbox\n' +
+      '* With direct communication, you must know the process that will receive the message (which must be running already)\n' +
+      '* With indirect, who receives the message can be decided well after sending\n' +
+      '* But if two processes want to receive from a mailbox “at the same time”, which one gets the message (and what about message ordering?)\n' +
+      '\n' +
+      '## Message Passing: Synchronous or asynchronous?\n' +
+      '* Synchronous = Blocking\n' +
+      '      * Synchronous send: Block until the message is received\n' +
+      '      * Synchronous recv: Block until a message is available\n' +
+      '      * When both send and receive are blocking, the operation is a **rendez-vous**\n' +
+      '* Asynchronous = Non-Blocking\n' +
+      '      * Non-blocking send: Send and continue\n' +
+      '      * Usually comes with the option to check the status later (Was the message received?)\n' +
+      '      * Non-blocking receive: e.g. Read any number of bytes (possibly\n' +
+      '0) or any message (possibly the empty one, or null)\n' +
+      '\n' +
+      '## Shared Memory\n' +
+      '\n' +
+      '![](@attachment/ics332-4-27.png)\n' +
+      '\n' +
+      '* IPC is performed outside the kernel space (but same host)\n' +
+      '* One process creates a shared memory segment\n' +
+      '* Other processes can then attach it to their address spaces\n' +
+      '* It is the processes\' (and the developer\'s) responsibility to make sure that the processes are not stepping on each other\'s toes\n' +
+      '* The OS is not involved\n' +
+      '* Memory is freed by the requester\n' +
+      '\n' +
+      '\n' +
+      '## Remote Procedure Calls\n' +
+      '* So far, we’ve viewed messages as unstructured sequences of bytes: the receiver has to interpret the message to know its meaning\n' +
+      '* **RPC** provides a procedure invocation abstraction across processes (and actually across machines)\n' +
+      '      * A client invokes a procedure in another process just as it would invoke it directly\n' +
+      '* The “magic” is performed through a client **stub** (one stub for\n' +
+      'each RPC):\n' +
+      '      * Marshal the parameters (structured data to bytes stream)\n' +
+      '      * Send the data over to the server\n' +
+      '      * Wait for the server’s answer\n' +
+      '      * Unmarshal the returned values (bytes stream to structured\n' +
+      'data)\n' +
+      '\n' +
+      '#### RPC in Java\n' +
+      '* RPC in Java: **Remote Method Invocation (RMI)**\n' +
+      '* Marshalling/Unmarshalling performed by the JVM\n' +
+      '* CLass needs to implement java.io.Serializable interface\n' +
+      '\n' +
+      '### Main Issue in Remote Procedure Calls\n' +
+      '* Local procedure calls never fail (i.e., if they reach an error condition, that error can be locally managed)\n' +
+      '* Not so easy when execution is remote: there are many “failure” cases\n' +
+      '      * RPC could be in execution but taking a long time and perhaps\n' +
+      'appear stuck\n' +
+      '      * RPC could have partially executed and then failed halfway\n' +
+      'through causing the server process to crash\n' +
+      '      * RPC could have successfully executed, but then failed when\n' +
+      'replying with some “it worked” message perhaps due to a network problem (when running across hosts)\n' +
+      '* What we want is a strong **execute exactly once** semantic: When the RPC completes (with perhaps hidden retries), then you know it’s been executed exactly once successfully, or not executed at all and failed\n' +
+      '\n' +
+      '## stdin, stdout, stderr\n' +
+      '* In UNIX, every process comes with 3 already opened "files"\n' +
+      '      * stdin: standard input stream\n' +
+      '      * stdout: standard output stream\n' +
+      '      * stderr: standard error stream\n' +
+      '* Each file in UNIX is associated an integer **file descriptor**\n' +
+      '* By convention, the file descriptors for each standard stream are 0, 1, 2, for stdin, stdout, and stderr, respectively.\n' +
+      '\n' +
+      '#### Redirecting Output\n' +
+      '* If you open a new file, this file gets the first available file descriptor. \n' +
+      '* If you then **close stdout**, and open a file right after, this file will have file descriptor of **1**.\n' +
+      '* This is how *printf* prints out to the standard output.\n' +
+      '\n' +
+      '#### dup()\n' +
+      '* If you already opened a file and it already has a file descriptor...\n' +
+      '* You can use dup(), which says "Create another file descriptor for this opened file\n' +
+      '* You can return the file descriptor of an open file using fileno()\n' +
+      '\n' +
+      '## Pipes\n' +
+      '* A pipe is a simple IPC mechanism between two processes\n' +
+      '* One can create a pipe so that process A can write to it and process B reads from it and B can read from the pipe.\n' +
+      '\n' +
+      '#### popen()\n' +
+      '* Creates a bi-directional pipe\n' +
+      '* Forks and execs a child process\n' +
+      '* Returns the pipe, which is in fact a file\n' +
+      '* Both the parent and the child can talk through the pipe\n' +
+      '\n' +
+      '## Conclusion\n' +
+      '* Two main mechanisms for processes to communicate:\n' +
+      '      * Message Passing: Within the kernel space\n' +
+      '      * Shared Memory: Outside the kernel space\n' +
+      '* Both mechanisms implemented in all mainstream OS\n' +
+      '* Many variants exist: RPCS, RMI, pipes, and others...\n' +
+      '\n';
   const html7 = converter.makeHtml(note7);
   target.innerHTML += html7;
 
