@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ICS 332 - Module 7: Synchronization (Deadlocks)</title>
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<a href="../index.html">Back to Home Page</a>
+<i>This note was last edited on Mar/12/2019 06:24 PM</i>
+
+<div id="target"></div>
+<script>
+  const converter = new showdown.Converter();
+  const note = '# 7. Deadlocks\n' +
+      '## Examples\n' +
+      '\n' +
+      '![](@attachment/ics332-7-14.png)\n' +
+      '\n' +
+      '* Thread 1 has lock1 and needs lock2, and Thread 2 has lock2 and needs lock1\n' +
+      '\n' +
+      '![](@attachment/ics332-7-15.png)\n' +
+      '\n' +
+      '## Defining a Deadlock\n' +
+      '* We have a *system* with **Resources** and **Processes**\n' +
+      '* The Resources:\n' +
+      '      * There can be resources of **types**: \\\\( R_1, R_2, ..., R_m \\\\)\n' +
+      '      * There are multiple resource of each type\n' +
+      '* The Processes (or Threads):\n' +
+      '      * \\\\( P_1, P_2, ..., P_n \\\\)\n' +
+      '      * Each process can request a resource of a given type and block/wait until one resource instance of that type becomes available, use a resource, or release a resource.\n' +
+      '* A deadlock state happens if every process \\\\( P_i \\\\) is waiting for a resource instance that is being held by another process.\n' +
+      '* *Three necessary conditions for a deadlock to occur:*\n' +
+      '      * **Mutual exclusion**: At least one resource is non-shareable: at most one process at a time can use it\n' +
+      '      * **No preemption**: Resources cannot be forcibly removed from processes that are holding them\n' +
+      '      * **Circular wait**: There exists a set \\\\( {P_0, P_1, ..., P_p} \\\\) of waiting processes such that (∀i ∈ {0, 1, ...p − 1}) \\\\( P_i \\\\) is waiting for a resource held by \\\\( P_{i + 1} \\\\) and \\\\( P_p \\\\) is waiting for a resource held by \\\\( P_0 \\\\) (There is a circular chain of proceses such that each process holds one or more resources that are being requested by the next process in the chain) \n' +
+      '* If a program is in a state that meets all the three conditions, then it **may** deadlocks (Note: MAY deadlock).\n' +
+      '\n' +
+      '## Resource Allocation/Resource Graph\n' +
+      '* We can describe the system using a system resource-allocation-request graph, where:\n' +
+      '* The set of **vertices** is made of:\n' +
+      '      * The *set of processes*\n' +
+      '      * The *set of resource types*\n' +
+      '      * ![](@attachment/ics332-7-16.png)\n' +
+      '* The set of **directed edges** is made of:\n' +
+      '      * **Request edges** where a request edge is built from a process \\\\( P_i \\\\) to a resource \\\\( R_j \\\\) of \\\\( P_i \\\\) has requested a resource of type \\\\( R_j \\\\)\n' +
+      '      * **Assignment Edges** where an assignment edge is built from an instance of a resource type \\\\( R_j \\\\) to a process \\\\( P_i \\\\) if \\\\( P_i \\\\) holds a resource instance of type \\\\( R_j \\\\)\n' +
+      '      * ![](@attachment/ics332-7-17.png)\n' +
+      '* Note: if a request can be fulfilled, the assignment edge replaces the request edge immediately\n' +
+      '* **Theorem**: *If the resource-allocation-request graph contains no (directed) cycle, then there is no deadlock in the system*\n' +
+      '      * If the graph contains a cycle, then there **may** be a deadlock\n' +
+      '* If there is only one resource instance (black dot) per resource type then--**Theorem**: *The existence of a cycle is a necessary and sufficient condition for the existence of a deadlock*\n' +
+      '\n' +
+      '## More Examples\n' +
+      '### Example 1 (2 lock example from the very start)\n' +
+      '\n' +
+      '![](@attachment/ics332-7-18.png)\n' +
+      '\n' +
+      '### Example 2\n' +
+      '\n' +
+      '![](@attachment/ics332-7-19.png)\n' +
+      '\n' +
+      'Moving the vertices around...\n' +
+      '\n' +
+      '![](@attachment/ics332-7-20.png)\n' +
+      '\n' +
+      '![](@attachment/ics332-7-21.png)\n' +
+      '\n' +
+      '### Example 3 (Has Cycle but NO Deadlock)\n' +
+      '\n' +
+      '![](@attachment/ics332-7-22.png)\n' +
+      '\n' +
+      '* When \\\\( P_4 \\\\) terminates it will release the instance of \\\\( R_2 \\\\) it locked, and that resource will be locked by \\\\( P_3 \\\\). \n' +
+      '* \\\\( P_3 \\\\) will then be able to complete\n' +
+      '* Another option is that \\\\( P_2 \\\\) completes first\n' +
+      '\n' +
+      '![](@attachment/ics332-7-23.png)\n' +
+      '\n' +
+      '## Deadlock Exercise\n' +
+      '\n' +
+      '![](@attachment/ics332-7-24.png)\n' +
+      '\n' +
+      '* M = 1: Can we have a deadlock?\n' +
+      '      * No! Both threads can always get what they want\n' +
+      '* M = 8: Can we have a deadlock?\n' +
+      '      * Yes!\n' +
+      '      * \\\\( P_1 \\\\) acquires 5 locks, context switch\n' +
+      '      * \\\\( P_2 \\\\) acquires 3 locks, context switch\n' +
+      '      * Deadlock (no lock left not taken)\n' +
+      '* M = 4: Can we have a deadlock?\n' +
+      '      * No! Both threads can always get what they want\n' +
+      '* M = 5: Can we have a deadlock?\n' +
+      '      * Yes!\n' +
+      '      * \\\\( P_1 \\\\) acquires 4 locks, context switch\n' +
+      '      * \\\\( P_2 \\\\) acquires 4 locks, context switch\n' +
+      '      * Deadlock (no lock left not taken)\n' +
+      '* Final Answer: we can only have a deadlock for M >= 5\n' +
+      '\n' +
+      '## Strategies against Deadlocks\n' +
+      '* **Prevention** — Just build all programs so that at least one of the previous 3 necessary conditions can never be true, *by design*\n' +
+      '* **Avoidance** — If we are aware of the resources that the processes/threads will use, we could avoid deadlocks, more of a *watchdog approach*\n' +
+      '* **Detection and recovery** — Use algorithms to detect whether a deadlock has happened and try to recover: a *let’s fix it approach*\n' +
+      '\n' +
+      '**NOTE: The lecture slides go into these strategies more into detail, however I do not include them in my notes. Read below to see why.**\n' +
+      'However, if you do want to read them in detail, then the lecture slides related to the strategies against deadlocks is starting from page 57 to 67 of the lecture.\n' +
+      '\n' +
+      '### So, what do OSes actually do in practice to prevent deadlocks????\n' +
+      '* OSes do **NOTHING** to prevent deadlocks in practice.\n' +
+      '\n' +
+      '## Priority Inversion\n' +
+      '* A famous "OS and Deadlocks" problem -- **priority inversion**\n' +
+      '      * Assume that there are 3 processes with different priorities: L < M < H\n' +
+      '      * H needs a resource currently held by L\n' +
+      '      * If M becomes runnable, it will preempt L from running\n' +
+      '      * Therefore L will never release the resource\n' +
+      '      * And therefore H will never run\n' +
+      '      * M has indirectly set the priority of H to the priority of L (since H has to wait for L to release the resource)\n' +
+      '* Solution: **Priority inheritance** - If a process requesting a resource has higher priority than the process locking the resource, the process locking the resource is temporarily given the higher priority.\n';
+  const html = converter.makeHtml(note);
+  const target = document.getElementById('target');
+  target.innerHTML = html;
+</script>
+
+<script>
+  renderMathInElement(document.body);
+</script>
+</body>
+</html>
