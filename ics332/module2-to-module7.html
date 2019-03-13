@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ICS 332 - Module 3 (OS Overview)</title>
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<a href="../index.html">Back to Home Page</a>
+<i>This note was last edited on Jan/00/2019 00:00 PM</i>
+
+<div id="target"></div>
+<script>
+  // Module 2
+  const converter = new showdown.Converter();
+  const note1 = '# Computer Architecture Overview\n' +
+      '## ENIAC\n' +
+      '* Electronic Numerical Integrator and Computer aka "Giant Brain"\n' +
+      '* First electronic general-purpose computer\n' +
+      '\n' +
+      '## Von Neumann Architecture Model\n' +
+      '1. **Central Processing Unit** *performs operations* and *controls the sequence of operations*\n' +
+      '2. **Memory Unit** contains *code* and data*\n' +
+      '3. **Input and Output (I/O)**\n' +
+      '\n' +
+      '![Icon](@attachment/1.png)\n' +
+      '\n' +
+      '## Memory Unit\n' +
+      '* Memory or RAM (Random Access Memory)\n' +
+      '* The memory is basically an indexed array of bytes\n' +
+      '* 1 Byte = 8 bits\n' +
+      '* The memory contains numerical data. The data are represented in memory in binary as bytes. \n' +
+      '* **Addresses** are unique binary bytes that contain the location of a data byte in memory. \n' +
+      '\n' +
+      '![Icon](@attachment/2.png)\n' +
+      '\n' +
+      '#### Example\n' +
+      '![Icon](@attachment/3.png)\n' +
+      '\n' +
+      '`Instruction: At address 1000 0000, store the address of the first \'9\' (0000 1001) in memory`\n' +
+      '* This action is called **indirection**\n' +
+      '* **Pointer/Reference** - The content at a memory location is the address of another memory location\n' +
+      '\n' +
+      '## Binary Instruction Encoding\n' +
+      '* **Assembler** - Transforms assembly code into binary code\n' +
+      '* Instructions are *encoded in binary*, based on the specification of the microprocessor your computer uses. aka "Opcode" \n' +
+      '\n' +
+      '![Icon](@attachment/4.png)\n' +
+      '\n' +
+      '* The program is stored in RAM/Memory *along with some data*\n' +
+      '* Once a program is loaded in memory, its **address space** contains both *code* and *data*\n' +
+      '\n' +
+      '![Icon](@attachment/5.png)\n' +
+      '\n' +
+      '#### How to Convert Binary to Decimal:\n' +
+      '\n' +
+      '![Icon](@attachment/7.png)\n' +
+      '\n' +
+      '![Icon](@attachment/8.png)\n' +
+      '\n' +
+      '#### How to Convert Decimal to Binary:\n' +
+      '\n' +
+      '![Icon](@attachment/15.png)\n' +
+      '\n' +
+      '*Note that the result is reverse of the computation*\n' +
+      '\n' +
+      '## Central Processing Unit (CPU)\n' +
+      '* The CPU reads data from memory into registers, writes data from registers to memory, and computes\n' +
+      '* The component that performs the computational operations is called the **ALU (Arithmetic and Logic Unit)**\n' +
+      '* Operands and results of operations must all be **in registers**\n' +
+      '* The CPU also *controls the execution of the program\'s instructions*\n' +
+      '* **Control Unit** - Component in charge of controlling program execution, and it uses dedicated *registers*:\n' +
+      '     * **Program Counter** - Contains the address of the next instruction that should be executed: is incremented after each instruction but can be set to whatever address when there is a change in control flow\n' +
+      '     * **Current Instruction** - The binary code of the instruction which is currently being executed.\n' +
+      '     * Other registers: Stack pointer, Frame pointer, ...\n' +
+      '* The Control Unit *decodes* the instructions (interprets their bits) and makes them happen.\n' +
+      '\n' +
+      '## Fetch-Decode-Execute Cycle\n' +
+      '1. The Control Unit *fetches* the next program instruction from memory using the program counter.\n' +
+      '2. The instruction is *decoded* and signals are sent to hardware components\n' +
+      '3. The instruction is *executed*:\n' +
+      '      * Values are fetched from memory and put in registers\n' +
+      '      * Computation is performed by the ALU and results are stored in registers\n' +
+      '      * Register values are pushed back to memory\n' +
+      '      * Program state is modified (Program Counter, Stack Pointer, ...)\n' +
+      '4. Repeat\n' +
+      '\n' +
+      '* The cycle is pipelined: Fetch the instruction `i + 1` while instruction `i` is being executed.\n' +
+      '\n' +
+      '#### Example\n' +
+      '![Icon](@attachment/9.png)\n' +
+      '\n' +
+      '`What is the *decimal* value of register B when the program terminates?`\n' +
+      '\n' +
+      '##### Note that I do not accurately draw the process of updating the PC and CI visually. It is implied that the CI is updated with the content from Steps 2. And technically the PC is supposed to be updated with the next address as soon as the CI is updated. But in these drawings, I only update the PC after each drawing.\n' +
+      '\n' +
+      '![Icon](@attachment/10.png)\n' +
+      '1. In our initial state, the address `0000 0001` is already loaded into our *Program Counter* (PC). \n' +
+      '2. We look at the content of our address. `000` is our Opcode which stands for "Load to register A from memory"\n' +
+      '3. The entire content `000 10011` from Step 2 is a *pointer* that corresponds to another memory address `0001 0011`. Converting the content at this pointer address from binary gives us *135d*.\n' +
+      '4. We then load the content from Step 3 into register A.\n' +
+      '\n' +
+      'TL;DR: **A <-- 135d**\n' +
+      '\n' +
+      '![Icon](@attachment/11.png)\n' +
+      '1. We load address `0000 0010` into our PC.\n' +
+      '2. We look at the content of our address. `010` is our Opcode which stands for "Add B to A; store result in A". As stated in our Opcode instructions, we can ignore the 5-bit operand `00000`.\n' +
+      '3. We add the content in B to A. Currently, the content at B `0000 0110` converts to *6d*. Therefore, *6d* + *135d* = *141d*\n' +
+      '4. We store the results from Step 3 into register A.\n' +
+      '\n' +
+      'TL;DR: **A <-- 6d + 135d = 141d**\n' +
+      '\n' +
+      '![Icon](@attachment/12.png)\n' +
+      '1. We load address `0000 0011` into our PC.\n' +
+      '2. We look at the content of our address. `011` is our Opcode which stands for "Store the value of A to memory." Based on the 5-bit operand of our content, we are instructed to store this in the memory address `10111`.\n' +
+      '3. We store the current value of A, which is *141d*, into the address `0001 0111` which corresponds to `10111` from Step 2.\n' +
+      '\n' +
+      'TL;DR: **(0001 0111) <-- 141d**\n' +
+      '\n' +
+      '![Icon](@attachment/13.png)\n' +
+      '1. We load address `0000 0100` into our PC.\n' +
+      '2. We look at the content of our address. `001` is our Opcode which stands for "Load to register B from memory." \n' +
+      '3. The entire content of the address `001 10111` (Note that we ignore a missing 0 at the start because it doesn\'t matter in this step context) is a *pointer* to the new memory address that we created from the previous drawing, `0001 0111`.\n' +
+      '4. We then store the content of the *pointer* address `0001 0111`, which is *141d* into register B.\n' +
+      '\n' +
+      'TL;DR: **B <-- (0001 0111) = 141d**\n' +
+      '\n' +
+      'The last address that we put into our PC is `0000 0101` which has the content `111 00000`. Our Opcode is `111` which Halts the program, and we can ignore the 5-bit operand. Therefore, our final state is:\n' +
+      '\n' +
+      '![Icon](@attachment/14.png)\n' +
+      '\n' +
+      '### RAM is Slow\n' +
+      '* Biggest issue: *memory is slow* while *accessing a register is very fast*\n' +
+      '* "Von-Neumann Bottleneck" - CPU does *nothing* while waiting for memory to give data\n' +
+      '* We use a trick called **memory hierarchy** to provide the illusion of a fast memory.\n' +
+      '\n' +
+      '![Icon](@attachment/6.png)\n' +
+      '\n' +
+      '#### Cache\n' +
+      '* When a program accesses a byte in memory:\n' +
+      '      * It checks whether the byte is in cache, and if so, it just gets it.\n' +
+      '      * Otherwise, the byte value is brought from the (slow) memory into the (fast) cache.\n' +
+      '      * The values **around the byte** are also brought into the cache.\n' +
+      '* **Temporal Locality**\n' +
+      '> A program tends to reference addresses it has already referenced\n' +
+      '\n' +
+      '> The first access is expensive while each subsequent accesses are cheap (The value is in cache!)\n' +
+      '\n' +
+      '* **Spatial Locality**\n' +
+      '> A program tends to reference addresses next to addresses it has already referenced\n' +
+      '\n' +
+      '> The access to element *i* is expensive while access to elements *i* + 1, *i* + 2, ... are cheap (The value is in cache!)\n' +
+      '\n' +
+      '* There is more than one level of cache (L1, L2, L3)\n' +
+      '* L1 (closest/fastest to CPU) is split into **Data Cache** and **Instructions Cache**\n' +
+      '* **Chunks** of data are brought from (far-away) memory and are copied and kept around in (nearby) caches.\n' +
+      '* **Cache Hit** - When a data item is found in cache (e.g., "L2 cache hit")\n' +
+      '* **Cache Miss** - When a data item is not found in cache (e.g., "L1 cache miss")\n' +
+      '\n' +
+      '## Direct Memory Access (DMA)\n' +
+      '* **Direct Memory Access** is the action when the CPU is *doing something useful while the memory copy is taking place*\n' +
+      '* DMA Process:\n' +
+      '      1. CPU tells DMA controller to initiate a RAM copy\n' +
+      '      2. When copy is complete, the DMA controller tells the CPU "it\'s done" by generating an interrupt\n' +
+      '      3. In the meantime, the CPU was free to do whatever\n' +
+      '* The DMA controller uses the memory bus to perform data transfers. The code executed by the CPU likely also uses the memory bus. Therefore, they can interfere with each other. Regardless, using DMA leads to better performance.\n' +
+      '* Because we cannot increase clock rate further (power/heat issues), our current CPUs are **multi-core**';
+  const html = converter.makeHtml(note1);
+  const target = document.getElementById('target');
+  target.innerHTML = html;
+
+  // Module 3
+  const note2 = '# 3. OS Overview\n' +
+      '* The OS is *not* a running program.\n' +
+      '* You do **not** need to "Reserve" one CPU/core for the OS.\n' +
+      '\n' +
+      '## The "three easy pieces" (Virtualization, Concurrency, and Persistence)\n' +
+      '### Virtualization\n' +
+      '* The main role of the OS is **virtualization**.\n' +
+      '* The OS is a **Resource Abstractor** - it defines a set of *logical resources* that correspond to *hardware resources*, and *well-defined operations* on these logical resources.\n' +
+      '      * CPU \\\\( \\leftrightarrow \\\\) Running Programs\n' +
+      '      * Memory \\\\( \\leftrightarrow \\\\) Data\n' +
+      '      * Storage Medium \\\\( \\leftrightarrow \\\\) Files\n' +
+      '* The OS is a **Resource Allocator** - it decides *who* (i.e., which running program) gets *how much* (e.g., CPU cycles, bytes of RAM), and *when*\n' +
+      '      * CPU \\\\( \\leftrightarrow \\\\) Should the currently program stop for a while? Which programs should run next? (e.g., to maximize CPU utilization)\n' +
+      '      * RAM \\\\( \\leftrightarrow \\\\) Where in RAM should a running program’s data be andwhen? (e.g., to minimize memory fragmentation)\n' +
+      '      * Storage \\\\( \\leftrightarrow \\\\) Where on “disk” should pieces of files be? (e.g., to minimize hard drive overhead)\n' +
+      '\n' +
+      '##### Virtualization - Why?\n' +
+      '> To make the computer easier to use/program\n' +
+      '\n' +
+      '##### Virtualization - How?\n' +
+      '* Resource Abstraction - The OS provides a **system call** API, i.e., an interface to all (virtualized) hardware resources\n' +
+      '* Resource Allocation\n' +
+      '\n' +
+      '#### Example\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-3-1.png)\n' +
+      '\n' +
+      '* This program prints an address. ANd you might think this is the actual address in RAM, but by running two instances of the program we can see that it cannot be an address in RAM.\n' +
+      '* The address that our program actually prints is a **virtual address**\n' +
+      '* Because of virtualization, each program instance has the illusion that it’s alone in *RAM*\n' +
+      '      * It doesn’t know whether other programs are running\n' +
+      '      * It never has to think “ooh... I shouldn’t write there in RAM because that address is used by another program”\n' +
+      '      * This is called **memory protection**\n' +
+      '* Because of virtualization, each program instnce has the illusion that it\'s alone in *CPU*\n' +
+      '      \n' +
+      '<hr/>\n' +
+      '* The mechanism by which a running program is kicked off the CPU and another one is brought in is called **context-switching**\n' +
+      '      * Context-switches are *really fast* and *really frequent*\n' +
+      '* **Multi-programming** - Having an arbitrary number of running programs at any time\n' +
+      '\n' +
+      '### Concurrency\n' +
+      '* **Concurrency** - Juggling many things at the same time\n' +
+      '\n' +
+      '### Persistence\n' +
+      '* **Persistence** - the ability to store data that survives a program termination / computer shutdown.\n' +
+      '      * This is done by the **file system**\n' +
+      '      \n' +
+      '## The OS Kernel\n' +
+      '* **Kernel** - refers to the part of the OS that is in charge of CPU, RAM, and "device" virtualization\n' +
+      '* The kernel is just *code* and *data* (it is **NOT** a running program)\n' +
+      '      * It always resides in memory\n' +
+      '* Again, the OS provides **memory protection**: each process thinks its alone and they never step on each other\'s toes\n' +
+      '\n' +
+      '## What happens when you turn on your Computer?\n' +
+      '1. POST (Power-On Self-Tests) are performed by the BIOS in firmware/ROM (Read-Only Memory)\n' +
+      '2. **Booting** - The BIOS runs a fist program: the *bootstrap program*\n' +
+      '3. The bootstrap program *initializes* the computer (register contents, device controller contents, ...)\n' +
+      '4. Then it loads another program in RAM, the **bootstrap loader**, and runs it\n' +
+      '5. The bootstrap loader loads (whole or part of) the *kernel* into RAM at a known/fixed address.\n' +
+      '      * It can then load another bootstrap loader, which can load more stuff into RAM, and call another loader, etc... (**chain loading**)\n' +
+      '6. At some point, a bootstrap loader creates and starts the first program (*init* on Linux, *launchd* on OS X)\n' +
+      '7. Then...*nothing* happens until an *event* occurs. (because it is *not* a running program)\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-3-2.png)\n' +
+      '\n' +
+      '* The *kernel* code and data reside in memory at a specified address, as loaded by the bootstrap program\n' +
+      '* From the picture, we can see that the kernel\'s memory footprint has to be small to work efficiently\n' +
+      '<br/>\n' +
+      '* A running program is called a **process**\n' +
+      '* InRAM, we have two kinds of code: User Code (code written by you) and Kernel Code\n' +
+      '* A process can run user code and kernel code by doing a **system call** (place a syscall to some kernel code, run that code, return to the user some code)\n' +
+      '\n' +
+      '\n' +
+      '## OS Events\n' +
+      '* **Event** - An "unexpected" change in the **control flow**\n' +
+      '* The event *interrupts* the execution of the currently running program and starts executing *kernel code*\n' +
+      '* The kernel defines a handler for each event type\n' +
+      '* THe kernel can be seen as **event handler**\n' +
+      '* Two kinds of events:\n' +
+      '      1. **Interrupts**: *Asynchronous* events\n' +
+      '      2. **Traps**: *Syncrhounous* events (also called *exceptions* or *faults*)\n' +
+      '* **Interrupts** - typically some device controller saying "some hardware thing happened" (e.g., "incoming data from keyboard")\n' +
+      '* **Traps** - typically caused by an instruction in a running program that requires immediate attention (e.g., "the running program tried to divide by 0")\n' +
+      '* System calls are really just events or procedure call in kernel code\n' +
+      '* Every ISA provdes a system call instruction, which causes a *trap* \n' +
+      '\n' +
+      '\n' +
+      '## Summary\n' +
+      '* OS is a resource abstractor and a resource allocator\n' +
+      '* Modern OSes allow multiprogramming via context-swtiching and memory protection\n' +
+      '* Kernel is code and data that always resides in RAM after boot\n' +
+      '* Kernel is not a running program; instead pieces of kernel code are executed to react to events\n' +
+      '* There are two kinds of events: asynchronous and synchronous\n' +
+      '* An important kind of trap are system calls, by which user programs get the kernel to do some work on their behalf';
+  const html2 = converter.makeHtml(note2);
+  target.innerHTML += html2;
+
+  // OS Services, Interfaces, Designs
+  const note3 = '';
+  const html3 = converter.makeHtml(note3);
+  target.innerHTML += html3;
+
+  // Module 4
+  // Process Abstraction
+  const note4 = '# 4. Process Abstraction\n' +
+      '## Definition\n' +
+      '* **Process** - OS abstraction to virtualize the CPU\n' +
+      '* In practice, a *process is a program in execution*\n' +
+      '      - Program: passive entity (bytes stored on disk as part of an executable file)\n' +
+      '      - A program becomes a process when it is loaded into memory\n' +
+      '* Multiple processes can be associated to the same program\n' +
+      '\n' +
+      '## A Process is defined by...\n' +
+      '* The program, or **code** (also called *text*)\n' +
+      '* The program (static) **data**\n' +
+      '* **Content of all registers**\n' +
+      '      - They represent the current state of the CPU in the current fetch-decode-execute cycle\n' +
+      '      - This includes the program counter\n' +
+      '* **Heap**\n' +
+      '* **Runtime stack**\n' +
+      '* **Page table**\n' +
+      '\n' +
+      '### Process Address Space\n' +
+      '* Code + Data + Heap + Stack defines the **Process Address Space**\n' +
+      '* Each time a method/procedure/function is called, an activation record is pushed on the stack. When it ends, the activation record is popped.\n' +
+      '* Each time a new object is created it is allocated in the heap. When it is destroyed, it is deallocated.\n' +
+      '* Going over stack size limit is called **Runtime Stack Overflow**\n' +
+      '\n' +
+      '![](@attachment/ics332-4-1.png)\n' +
+      '\n' +
+      '![](@attachment/ics332-4-2.png)\n' +
+      '\n' +
+      '#### The Heap\n' +
+      '* New objects/structures/arrays are created on the Heap\n' +
+      '* *malloc* in C; *new* in Java/C++/C#\n' +
+      '\n' +
+      '#### The Runtime Stack\n' +
+      '* A stack where items can be pushed or popped\n' +
+      '* Management of the stack is done entirely by the compiler/JVM\n' +
+      '* Items on the stacked are pushed/popped in groups, or **activation records**\n' +
+      '* An activation record contains all the bookkeeping necessary for placing and returning from one method call\n' +
+      '* The Kernel has to implements its own stack management and to save space it has a **fixed-size stack** and it is very small.\n' +
+      '\n' +
+      '##### Activation Record\n' +
+      '* When a method/procedure is called:\n' +
+      '      * **Register values** of the caller need to be saved in RAM somewhere, so that the callee can use the registers freely, and the caller\'s registers values can be restored once the callee returns saved\n' +
+      '      * The **return address**, i.e., the address of the instruction to return to, needs to be saved in RAM somewhere\n' +
+      '      * The **paramters of the callee** need to be stored in RAM somewhere\n' +
+      '      * The **local variables of the callee** have to be stored in RAM somewhere\n' +
+      '* The above items together are called an **activation record** (or **stack frame** or **activation frame**)\n' +
+      '* The "somewhere in RAM" above is **on the stack**\n' +
+      '\n' +
+      '## Process Life Cycle\n' +
+      '* Each process goes through a **lifecycle**\n' +
+      '* This term (in computer science) means that:\n' +
+      '      * A process can be in a finite number of different **states**\n' +
+      '      * There are allowed **transitions** between some pairs of states\n' +
+      '      * THere transitions happen when some event occurs\n' +
+      '\n' +
+      '#### Single-Tasking OSes\n' +
+      '* OSes used to be **single-tasking** - only one process can be in memory at a time\n' +
+      '\n' +
+      'Single-Tasking with MS-DOS\n' +
+      '\n' +
+      '![](@attachment/ics332-4-4.png)\n' +
+      '\n' +
+      'Single-Tasking OS Process Lifecycle\n' +
+      '\n' +
+      '![](@attachment/ics332-4-3.png)\n' +
+      '\n' +
+      '## Multi-Tasking (a.k.a. Multi-Programming)\n' +
+      '* Modern OSes support **multi-tasking** - multiple processes can co-exist in memory\n' +
+      '* When you run a program, you really place a system call to the OS asking it to create a new process\n' +
+      '* When a process terminates, the OS reclaims its memory, which can be allocated to another process later\n' +
+      '* All processes have their own **separate** address space (RAM virtualization)\n' +
+      '\n' +
+      '![](@attachment/ics332-4-5.png)\n' +
+      '\n' +
+      '## The "Ready" State\n' +
+      '* With Multi-Tasking, assuming a single CPU, we can have many processes in RAM that *could run* but only one can run\n' +
+      '* Therefore, a process can be *ready to run* but not currently running\n' +
+      '* The OS picks a process to run for a while: it "schedules" it\n' +
+      '* Later the process vacates the CPU: it is "de-scheduled"\n' +
+      '* The OS then picks another process to run\n' +
+      '* This is how the OS virtualizes the CPU so that each process "thinks" it\'s alone on the CPU\n' +
+      '* Thefore, we need a new state in the lifecycle: The **Ready** state\n' +
+      '\n' +
+      '![](@attachment/ics332-4-6.png)\n' +
+      '\n' +
+      '## Process Control Block\n' +
+      'The OS uses a data structure to keep track of a process--**Process Control Block (PCB)**:\n' +
+      '* Process state\n' +
+      '* Process ID (aka PID)\n' +
+      '* User ID\n' +
+      '* Saved Register Values (include PC)\n' +
+      '* CPU_scheduling information\n' +
+      '* SOme Memory-management information\n' +
+      '* Accounting information (amount of hardware resources used so far)\n' +
+      '* I/O status info\n' +
+      '* ... and a lot of other things\n' +
+      '\n' +
+      '## Process Table\n' +
+      '* The OS has in memory (in the Kernel space) one PCB per process\n' +
+      '* A new PCB is created each time a new process is created and destroyed each time a process terminates\n' +
+      '* The OS keeps a "list" of PCBs: the **Process Table**\n' +
+      '* Because the Kernel size is bounded, so is the Process Table\n';
+  const html4 = converter.makeHtml(note4);
+  target.innerHTML += html4;
+
+  // Process API
+  const note5 = '# 4. Process API\n' +
+      '## Process Creation\n' +
+      '* A process can create processes\n' +
+      '* If process A creates process B, we say that "A is the **parent** of B", and "B is the **child** of A"\n' +
+      '* A process can have at most *one* parent; a process can have many children\n' +
+      '* Each process has a **PID** (Process ID), which is an integer\n' +
+      '* The PID of the parent of a process is called the **PPID** (Parent Process ID)\n' +
+      '* Linux command to check processes: **ps**\n' +
+      '* After creating a child, the parent continus executing. But at any point, even right away, it can wait for the child\'s completion.\n' +
+      '* The child can be:\n' +
+      '      * either a complete clone of the parent (i.e., have an exact copy of the address space)\n' +
+      '      * or be an entirely new program\n' +
+      '      \n' +
+      '## fork() System Call\n' +
+      '* *fork()* is a system call that creates a new process.\n' +
+      '* The child is an almost exact copy of the parent except for:\n' +
+      '      * Its PID (two processes can’t have the same ID)\n' +
+      '      * Its PPID (its parent cannot also be its grandparent)\n' +
+      '      * Its resource utilization (set to 0 since it’s just started)\n' +
+      '* After the call to fork(), parent continus executing and the child begins executing.\n' +
+      '* fork() returns *0 to the child* and returns the *child\'s PID to the parent*; *less than 0* if fork() failed.\n' +
+      '\n' +
+      '### Examples\n' +
+      '\n' +
+      '#### Example 1\n' +
+      '\n' +
+      '![](@attachment/ics332-4-7.png)\n' +
+      '\n' +
+      '........Let\'s trace it:\n' +
+      '\n' +
+      '![](@attachment/ics332-4-8.png)\n' +
+      '\n' +
+      '![](@attachment/ics332-4-9.png)\n' +
+      '\n' +
+      '![](@attachment/ics332-4-10.png)\n' +
+      '\n' +
+      '![](@attachment/ics332-4-11.png)\n' +
+      '\n' +
+      '![](@attachment/ics332-4-12.png)\n' +
+      '\n' +
+      '* Both processes coexist **independently**; the code is executed independently in the Parent and in the Child\n' +
+      '\n' +
+      '#### Example 2\n' +
+      '\n' +
+      '![](@attachment/ics332-4-13.png)\n' +
+      '\n' +
+      '#### Example 3\n' +
+      '\n' +
+      '![](@attachment/ics332-4-14.png)\n' +
+      '\n' +
+      '#### Example 4\n' +
+      '\n' +
+      '![](@attachment/ics332-4-15.png)\n' +
+      '\n' +
+      '![](@attachment/ics332-4-16.png)\n' +
+      '\n' +
+      '![](@attachment/ics332-4-17.png)\n' +
+      '\n' +
+      '![](@attachment/ics332-4-18.png)\n' +
+      '\n' +
+      '![](@attachment/ics332-4-19.png)\n' +
+      '\n' +
+      '![](@attachment/ics332-4-20.png)\n' +
+      '\n' +
+      '* Total count is **12** processes\n' +
+      '\n' +
+      '## The exec() family\n' +
+      '* The exec system call family **replaces the process image** (i.e., process address space) **by that of a specific program** (stored on disk as an executable)\n' +
+      '      * For example: <code>execv("/bin/ls", ...)</code>. The */bin/ls* is the specific program that replaces the process image.\n' +
+      '* The call to exec() never returns unless there is an error\n' +
+      '\n' +
+      '## Zombies 🧟\n' +
+      '\n' +
+      '![](@attachment/ics332-4-21.png)\n' +
+      '\n' +
+      '* When a child process terminates, it remains as a **zombie** in the **Terminated*8 state\n' +
+      '* Rationale: The parent process may want to know about the status of a child process.\n' +
+      '      * e.g., Run this first program and when it is finished, run that one...\n' +
+      '      * Therefore, the parent may want to *wait* for child\'s completion\n' +
+      '* Zombies do not use hardware resources but each zombies uses a slot in the Process Table (which can eventually fill up the Process Table)\n' +
+      '* A zombie lingers on until **its parent has acknowledged its termination** or **its parent dies**\n' +
+      '* The zombie is then *reaped* by the OS\n' +
+      '\n' +
+      '## Process Terminations\n' +
+      '* A process terminates itself with the exit() system call, which takes as argument an integer called the process *exit/return/error value/code*\n' +
+      '* All resources of the process are then deallocated by the OS\n' +
+      '* A process can also cause the termination of another process; this is done using **signals** and the kill() system call\n' +
+      '\n' +
+      '## Signals\n' +
+      '* **Signals** are **software interrupts** (i.e., a signal is an asynchronous event that the program must act upon in some way)\n' +
+      '* The OS defines a number of signals, each with a name and a number, and they can be used for process synchronization.\n' +
+      '* Each signal causes a default behavior in the process (e.g., the SIGINT signal causes the process to terminate)\n' +
+      '* The signal() system call allows a process to specify what action to do on a signal\n' +
+      '\n' +
+      '## Back to zombies: wait() and waitpid()\n' +
+      '* A parent can wait for a child\'s completion\n' +
+      '* wait() system call blocks until any child completes and returns the pid of the completed child and the child\'s exit code\n' +
+      '* waitpid() system call blocks until a specific child completes and can be made non-blocking.\n' +
+      '* Therefore, one way to avoid zombies is to always call wait() or waitpid()\n' +
+      '\n' +
+      '### SIGCHILD signal\n' +
+      '* When a child exists, a SIGCHILD signal is sent to the parent\n' +
+      '* The typical convenient way to avoid zombies altogether:\n' +
+      '      * Parent associates a handler to SIGCHILD\n' +
+      '      * The handler calls wait()\n' +
+      '      * This way all children terminates are acknowledged\n' +
+      '\n' +
+      '## Orphans\n' +
+      '* A child process becomes an **oprhan** when its parent dies before the child process dies.\n' +
+      '* The orphan is **adopted*8 by the process with **PID 1**\n' +
+      '* To create a process that is completely separate from the parent: create a grandchild and kill its parent\n' +
+      '      * The grandchild will be adopted by the process with PID 1\n' +
+      '      \n' +
+      '## Overview of fork()\n' +
+      '\n' +
+      '![](@attachment/ics332-4-22.png)\n' +
+      '\n' +
+      '## Miscellanous Info\n' +
+      '* Although Windows OS does not have fork(), it can still create processes using CreateProcess() which combines fork() and exec().\n' +
+      '* WaitForSingleObject() for Windows is equivalent to wait()\n' +
+      '* TerminateProcess() for Windows is similar to kill()\n' +
+      '* Java can create only processes extrnal to the JVM\n' +
+      '\n';
+  const html5 = converter.makeHtml(note5);
+  target.innerHTML += html5;
+
+  // Process Mechanisms
+  const note6 = '';
+  const html6 = converter.makeHtml(note6);
+  target.innerHTML += html6;
+
+  // Inter-Process Communication (IPC)
+  const note7 = '';
+  const html7 = converter.makeHtml(note7);
+  target.innerHTML += html7;
+
+  //Module 5
+  // Threads
+  const note8 = '# 5. Threads\n' +
+      '## Concurrent Computing\n' +
+      '* **Concurrent Computing** - several operations are performed during overlapping time periods\n' +
+      '* **Concurrency** - A feature of a program that can do multiple things "At the same time"\n' +
+      '* A program is *concurrent* if it consists of units that can be executed independently. \n' +
+      '\n' +
+      '### What is Concurrency used for?\n' +
+      '* Make programs faster\n' +
+      '* To make programs more responsive\n' +
+      '\n' +
+      '<hr/>\n' +
+      '*Remember, because the OS virtualizes memory, processes don\'t share memory naturally*\n' +
+      '*So how do we program processes that have cooperative behavior? We use **Threads***\n' +
+      '\n' +
+      '## Threads\n' +
+      '* A **thread** is a basic unit of CPU utilization within a process\n' +
+      '* Multi-threaded process: Concurrent execution of different parts of the same running program\n' +
+      '* Each thread has its own thread ID, program counter, registers set, and stack.\n' +
+      '* It also *shares* with other threads in the same process\n' +
+      '      * Code/text section\n' +
+      '      * Data segment\n' +
+      '      * List of open file descriptors\n' +
+      '      * Heap\n' +
+      '      * Signal Behaviors\n' +
+      '* Threads can execute **different** or **same** parts of code.\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-5-1.png)\n' +
+      '\n' +
+      '## Advantages of Threads vs Processes\n' +
+      '* Resource Sharing\n' +
+      '      * Threads "naturally" share memory\n' +
+      '      * Provides a direct SHared Memory IPC mechanism\n' +
+      '* Economy\n' +
+      '      * Creating a thread is cheap--Slightly cheaper than creating a process in OSX/Linux; Much cheaper than creating a process in Windows\n' +
+      '      * Context-switching between threads is cheaper than between processes\n' +
+      '      * What you can do with processes, you can do with threads faster\n' +
+      '      * In old OSes(Solaris 4), threads were called *lightweight processes*\n' +
+      '\n' +
+      '## Drawbacks of Threads vs Processes\n' +
+      '* If one thread fails with an error/exception which is not managed, all threads (and therefore the whole process fails)\n' +
+      '* Threads may be more memory-constrained than processes\n' +
+      '* Threads do not benefit from memory protection (Since you want them to see the same memory)\n' +
+      '   \n' +
+      '## User Threads vs Kernel Threads\n' +
+      '* Threads can be supported solely in User Space (**User Threads**)\n' +
+      '* Main advantage of User Threads is *low overhead* (because no syscalls)\n' +
+      '* User Threads have several drawbacks:\n' +
+      '      * If oen thread blocks, all other threads block\n' +
+      '      * All threads run on the same core (because the OS doesn\'t know that there are threads within a process)\n' +
+      '* For these reasons, User Threads are *no longer* heavily used\n' +
+      '* All OSes today provide support for threads (**Kernel Threads**)\n' +
+      '\n' +
+      '#### Thread Libraries:\n' +
+      '* C/C++: Pthreads\n' +
+      '* C/C++: OpenMP (layer above Pthreads)\n' +
+      '* Java: Java threads (implemented by the JVM, which relies on Pthreads)\n' +
+      '* Python: threading / multiprocessing packages \n' +
+      '* JavaScript: no multithreading (multiprocessing is performed by the "Web application")\n' +
+      '\n' +
+      '## Java Threads\n' +
+      '**Ways to create threads in Java:**\n' +
+      '* Thread class\n' +
+      '* Runnable interface\n' +
+      '* Callable interface\n' +
+      '* ExecutorService interface\n' +
+      '\n' +
+      '### The Thread class\n' +
+      '* Using the **Thread class:** Implementing a subclass that extends Thread\n' +
+      '* Override the run() method and call the (never overriden) start() method to start the thread.\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-5-2.png)\n' +
+      '\n' +
+      '### The Runnable interface\n' +
+      '* Implements the Runnable interface\n' +
+      '* Override the run() method and call the (never overriden) starT() method to start the thread.\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-5-3.png)\n' +
+      '\n' +
+      'One Liner:\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-5-4.png)\n' +
+      '\n' +
+      '### The Callable interface\n' +
+      '* Implements the Callable interface\n' +
+      '* Override the call() method, add a return type, and checked exception to call()\n' +
+      '* Start the thread through an ExecutorService\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-5-8.png)\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-5-9.png)\n' +
+      '\n' +
+      '<hr/>\n' +
+      '### Java Thread Example\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-5-5.png)\n' +
+      '\n' +
+      '* When the start() method is called, the main thread creates a new thread giving us two threads in total.\n' +
+      '* Both threads are running:\n' +
+      '      * Main thread does not do anything\n' +
+      '      * New thread prints a bunch of 1s to the terminal.\n' +
+      '* **In Java, the program terminates only when all your threads terminate**\n' +
+      '      * The main thread terminates when it returns from main()\n' +
+      '      * The new thread terminates when it returns from run()\n' +
+      '* If we also put a FOR loop to run inside the main thread, the output would be impossible to guess because it would be **non-deterministic**\n' +
+      '* Deciding when a thread runs is called **thread scheduling**\n' +
+      '\n' +
+      '## Multi-Threading Programming Challenges\n' +
+      '* **Major Challenge**: You cannot make any assumption about thread scheduling since the OS is in charge\n' +
+      '* **Major Difficulty**: You may not be able to reporudce a bug because each execution is different (non-deterministic)\n' +
+      '\n' +
+      '## Java Thread States\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-5-6.png)\n' +
+      '\n' +
+      '#### versus Process States\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-5-7.png)\n' +
+      '\n' +
+      '## Java Thread Cancellation\n' +
+      '* It is not possible to perform an **asynchronous cancellation** of a thread (i.e., a thread tells another thread to stop)\n' +
+      '* In other words, **you cannot kill a Java thread**\n' +
+      '* Instead, you can do **deferred cancellation** (the thread has to periodically check whether it should terminate)\n' +
+      '\n' +
+      '## Miscellanous Java Thread Functions\n' +
+      '* Given a Thread object, calling its **join()** method means "Waiting for that thread to terminate \n' +
+      '      * This is an example of thread synchronization\n' +
+      '      * When using an ExecutorService object, the method is **awaitTermination()**\n' +
+      '* In Java, a thread can call **Thread.yield()** which says "I am willingly giving up the CPU now" (execution of a program is still non-deterministic even with this call)\n' +
+      '* In Java, the Thread class has a **setPriority()** and **getPriority()** methods to set priorities to Threads using integers; the greater the integer, the higher the priority\n' +
+      '\n' +
+      '## Linux/MacOS X THreads\n' +
+      '* Linux does not distinguish between processes and threads: they are all called **tasks**\n' +
+      '* The *clone()* syscall is used to create a task.\n';
+  const html8 = converter.makeHtml(note8);
+  target.innerHTML += html8;
+
+  //Module 6
+  // Scheduling Basics
+  const note9 = '# 6. Scheduling Basics\n' +
+      '\n' +
+      '*Note: Jobs is also a term used to mean processes or thread for these notes*\n' +
+      '\n' +
+      '## CPU Scheduling\n' +
+      '* **CPU Scheduling** - The process by which the OS decides which processes/threads should run (and for how long)\n' +
+      '* Only *READY* processes/threads can be scheduled\n' +
+      '* The *policy* - the **scheduling strategy**\n' +
+      '      * Broad goal is to improve system performance and productivity, including:\n' +
+      '      * **Maximizing CPU Utilization**\n' +
+      '      * **Making jobs "happy"**\n' +
+      '* The *mechanism* - the **dispatcher**\n' +
+      '      * OS component that knows how to switch between jobs on the CPU (implements context-switching)\n' +
+      '      * It must be fast\n' +
+      '\n' +
+      '## Long-term vs Short-term Scheduling\n' +
+      '* **Long-Term Scheduler**\n' +
+      '      * Selects jobs from a submitted pool of jobs and loads them to memory\n' +
+      '      * Orchestrate jobs executions in the long term (minutes, hours, ...)\n' +
+      '      * Executed every (10 minutes, hour, ...)\n' +
+      '      * Can construct complex schedules\n' +
+      '      * Uses sohpsticated decision algorithms\n' +
+      '      * *Long-Term Scheduling: done by **non-OS software (Job Schedulers)***\n' +
+      '* **Short-Term Scheduler**\n' +
+      '      * Selects already-in-memory jobs\n' +
+      '      * Orchestrate jobs executions in the very short term (next 1000ths of seconds)\n' +
+      '      * Executed every (10\'s of milliseconds, ...)\n' +
+      '      * Cannot make complex decision\n' +
+      '      * Uses simple decision algorithms\n' +
+      '      * *Short-Term Scheduling: done by **OSes (CPU Scheduler)***\n' +
+      '      \n' +
+      '## CPU or I/O Burst Cycles\n' +
+      '* Most jobs alternate between CPU and I/O activities called **CPU bursts** and **I/O bursts**\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-6-1.png)\n' +
+      '\n' +
+      '## CPU-bound or I/O-bound jobs\n' +
+      '* **CPU-bound job**: a job that is mostly using the CPU with mostly (possibly many) short I/O bursts\n' +
+      '* **I/O-bound job**: a job that is mostly waiting for I/O with mostly (possibly many) short CPU bursts\n' +
+      '\n' +
+      '## Job Turnaround Time\n' +
+      'A metric that owners of CPU-bound jobs care about is **job turnaround time**\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-6-2.png)\n' +
+      '\n' +
+      '### First Come First Serve Algorithm (FCFS or FIFO)\n' +
+      '* Assume we have 3 jobs, *A*, *B*, and *C*, each running for 10 seconds\n' +
+      '* These jobs are in some order in the Queue, say, *A*, *B*, and *C*\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-6-3.png)\n' +
+      '\n' +
+      '* The average turnaround time is: \\\\( \\widehat{T}_{\\text{turnaround}} = \\frac{10+20+30}{3} = 20 \\\\)\n' +
+      '* This is only 2x more than the average job duration\n' +
+      '\n' +
+      '#### Problem with FCFS: Convoy Effect\n' +
+      '* Assume we have the same 3 jobs, but *A* takes 100 seconds\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-6-4.png)\n' +
+      '\n' +
+      '* The average turnaround time is: \\\\( \\widehat{T}_{\\text{turnaround}} = \\frac{100+110+120}{3} = 110 \\\\)\n' +
+      '* This is 2.75x more than the average job duration!\n' +
+      '* This is the **Convoy Effect** - "Stuck behind somebody with a full cart at the supermarket" problem\n' +
+      '\n' +
+      '### Shortest Job First Algorithm (SJF)\n' +
+      '* We can fix our Convoy Effect problem by sorting: dispatch shortest jobs first\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-6-5.png)\n' +
+      '\n' +
+      '* The average turnaround time is: \\\\( \\widehat{T}_{\\text{turnaround}} = \\frac{10+20+120}{3} = 50 \\\\)\n' +
+      '* Therefore, this is *optimal* for our assumptions\n' +
+      '\n' +
+      '#### SJF with Jobs Arriving at Different Times\n' +
+      '* Say *A* arrives at time 0, and *B* and *C* arrive at time 10\n' +
+      '* At time 0, we *have* to dispatch job *A*\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-6-6.png)\n' +
+      '\n' +
+      '* The average turnaround time is: \\\\( \\widehat{T}_{\\text{turnaround}} = \\frac{100+(110-10)+(120-10)}{3} = 103.33 \\\\)\n' +
+      '* Jobs *B* and *C* are "unhapopy" ("Got to the checkout lane just after somebody with a full cart" problem)\n' +
+      '\n' +
+      '#### Solution: Preempting Jobs\n' +
+      '* We need to remove the assumption of "Once started, each job runs to completion.\n' +
+      '* Rather, we assume that the OS can **preempt** jobs\n' +
+      '* **Shortest Time-to-Completion First** Algorithm (STCF)\n' +
+      '      * Whenever a job arrives, if it has shorter time-to-completion than the running job, then preempt the running job and run the new job\n' +
+      '      * Whenever a job finishes, run the job with the shortest time-to-completion\n' +
+      '      * ![Icon](@attachment/ics332-6-7.png)\n' +
+      '      * The average turnaround time is: \\\\( \\widehat{T}_{\\text{turnaround}} = \\frac{(120-0)+(20-10)+(30-10)}{3} = 50 \\\\)\n' +
+      '      * Solves the "Stuck behind big cart at the "supermarket" problem\n' +
+      '      * Turns out that **STCF** is *optimal* for average turn-around time when *jobs can be preempted*\n' +
+      '      * And **SJF** is *optimal* for average-turn around time when *jobs cannot be preempted*\n' +
+      '* But STCF gives us the **starvation problem** - a job may never run\n' +
+      '* Meaning that a stream of "short" jobs can forever overtake a long job ("Somebody with a full cart at the supermarket is inline, and every minute somebody arrives to buy just a banana"\n' +
+      '* And this makes it even harder because **we do NOT know job execution times**\n' +
+      '\n' +
+      '## Round-Robin (RR)\n' +
+      '* We can solve the *starvation problem* with **Roound-Robin** - let a job run for at most a little bit, then preempt it, then run the next job\n' +
+      '* The (maximum) amount of time a job runs for before preemption is called **time slice, time quantum, or scheduling quantum**\n' +
+      '* Example: 3 jobs, *A*, *B*, and *C*, arrive at the same time and wish to run for 5s, and our time quantum is 1s:\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-6-8.png)\n' +
+      '\n' +
+      '* New Metric of "goodness": **Response Time**\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-6-9.png)\n' +
+      '\n' +
+      '## Time Quantum\n' +
+      '* **Time Quantum too large**: poor response time\n' +
+      '* **Time Quantum too small**: too much context-switching overhead\n' +
+      '\n' +
+      '## Summary of Turnaround Time vs Response Time\n' +
+      '* Turn-around time is a reasonable metric, especially if we allow jobs to be preempted\n' +
+      '* But turn-around time is impossible to optimize if we don\'t know the job durations\n' +
+      '* Instead, we can focus on response time and use Round Robin\n' +
+      '* Algorithms that are good for turnaround time are typically not good for response time, and conversely\n' +
+      '\n' +
+      '<hr/>\n' +
+      '\n' +
+      '* Each job alternates between CPU bursts and I/O bursts\n' +
+      '* But if we do nothing about this, the CPU could be idle which is poor use of resources\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-6-10.png)\n' +
+      '\n' +
+      '## Dealing with I/O\n' +
+      '* When a job issues an I/O operation, it *vacates the CPU*\n' +
+      '* When the I/O operation completes, the *job is back in the Ready Queue and will be given the CPU at some point in the future*\n' +
+      '* Example with 10ms time quantum, and 10 ms I/O and CPU bursts for job *A*:\n' +
+      '\n' +
+      '![Icon](@attachment/ics332-6-11.png)\n' +
+      '* Essentially, **each CPU burst is treated as a job**\n';
+  const html9 = converter.makeHtml(note9);
+  target.innerHTML += html9;
+
+  // Advanced Scheduling
+  const note10 = '# 6. Advanced Scheduling\n' +
+      '## Multi-Level Feedback Queue (MLFQ)\n' +
+      '* Previous problem with Round Robin\'s time quantum\n' +
+      '      * interactive jobs want a small time-quantum, and CPU-bound want a large time-quantum\n' +
+      '      * interactive jobs can get stuck in the Ready Queue behind a bunch of CPU-intensive jobs\n' +
+      '* Multi-Level Feedback Queue\'s Solution: \n' +
+      '      * interactive jobs should get the CPU as soon as they want it\n' +
+      '      * Use priority levels and use **one Round-Robin queue per level**\n' +
+      '      * ![](@attachment/ics332-6-12.png)\n' +
+      '\n' +
+      '## Multi-Level Feedback Queue\'s Priorities\n' +
+      '* If Priority(A) > Priority(B), then A runs \n' +
+      '* If Priority(A) = Priority(B), then A and B run in a Round-Robin\n' +
+      '* Ideally, interactive jobs should be in high priority queues\n' +
+      '* Remember, once a job does I/O it is no longer in the Ready Queue\n' +
+      '* We also want jobs to be promoted/demoted to higher queues when they start/stop being less/more interactive\n' +
+      '\n' +
+      '### Priority Queues\n' +
+      '* When a job first shows up, we put it in the highest priority queue (we assume that it is interactive first)\n' +
+      '* However, we a way to demote these jobs.\n' +
+      '* Key Insights:\n' +
+      '      * Interactive jobs do **not** use their time quantu fully because they always have short CPU bursts\n' +
+      '      * CPU-intensive, non-interactive jobs use their time quantu fully because they always have long CPU bursts\n' +
+      '* Using this information, if a job uses its full time quantum then it is demoted because it is deemed non-interactive job.\n' +
+      '* Otherwise, if a job does not use its full time quantum then it stays at the same priority level\n' +
+      '\n' +
+      '#### MLFQ Simple Example\n' +
+      '\n' +
+      '![](@attachment/ics332-6-13.png)\n' +
+      '\n' +
+      '\n' +
+      '* From this example we can see that the MLFQ gives the interactive jobs (gray bars) the CPU whenever it wants it\n' +
+      '* **A higher priority job always preempets a lower priority job**\n' +
+      '\n' +
+      '## Multi-Level Feedback Queue Starvation Problem and Paramter Problem\n' +
+      '* A clear problem with MLFQ is **starvation**- a CPU-bound job may never run which can happen if we have a lot of interactive jobs\n' +
+      '* Solution: every *S* seconds, move all the jobs to the priority queue, and let them trickle back down\n' +
+      '* This is called a **Priority Boost**\n' +
+      '\n' +
+      '![](@attachment/ics332-6-14.png)\n' +
+      '\n' +
+      '* Another problem with MLFQ is that there are too many queues:\n' +
+      '      * How many queues?\n' +
+      '      * What time quantum for each queue?\n' +
+      '      * What to use for *S*?\n' +
+      '* People have typically experimented with these\n' +
+      '* Typical approach: larger time quantum for lower-priority queues\n' +
+      '\n' +
+      '## Multi-Processor Scheduling\n' +
+      '* All our processors are multi-core, so OSes need to do multiple scheduling across cores which can lead to this problem:\n' +
+      '\n' +
+      '![](@attachment/ics332-6-16.png)\n' +
+      '\n' +
+      '* From this picture, the problem is that **having jobs jump around cores make cache use inefficient**\n' +
+      '\n' +
+      '### Multi-Core architectures\n' +
+      '* One multi-core architecture example is having 2 CPUs with caches share the same memory.\n' +
+      '* A job runs on Core #1 and has its data in the cache; this experiences a lot of cache hits, which is good\n' +
+      '* However once Core #2 gets scheduled it will experience many cache misses--terrible performance.\n' +
+      '* Worst case: jobs keep bouncing between cores and it\'s almost as if you had no cache. \n' +
+      '\n' +
+      '### Scheduling for Cache Affinity\n' +
+      '* Each job has some **affinity** to some core: the core at which it has some data in the cache\n' +
+      '* Most modern OSes ensure that jobs are scheduled on cores while taking affinity into account\n' +
+      '\n' +
+      '![](@attachment/ics332-6-15.png)\n' +
+      '\n' +
+      '* Job E bounces around, but other jobs stay put on the same core that they have affinity to, which is good performance.\n' +
+      '\n' +
+      '## Linux Scheduling\n' +
+      'Well-known Linux scheduling algorithms:\n' +
+      '* O(1) Scheduler: multiple queues, tricks to make quick decisions, accounting of CPU usage by each job, akin to MLFQ\n' +
+      '* CFS (Completely Fair Scheduler): stores jobs in a read-black tree instead of queues, implements proportional-share approach for fairness \n' +
+      '* BFS (BF Scheduler): simple algorithm, single queue, also focused on fairness\n' +
+      '\n' +
+      'The default has been CFS\n';
+  const html10 = converter.makeHtml(note10);
+  target.innerHTML += html10;
+
+  // Module 7
+  // Race Conditions
+  const note11 = '# 7. Race Conditions\n' +
+      '## False Concurrency\n' +
+      '* **False Concurrency** - when the OS uses context-switching to alternate between processes/threads on a core\n' +
+      '* Example: (the gaps below = context-switching overhead)\n' +
+      '\n' +
+      '![](@attachment/ics332-7-1.png)\n' +
+      '\n' +
+      '* Provides the illusion of concurrency to a human\n' +
+      '* Increases CPU utilization (while a process/thread is blocked on I/O, another can run)\n' +
+      '\n' +
+      '## True Concurrency\n' +
+      '* Since our computers are **multi-core**, so we can have **True Concurrency**\n' +
+      '* Still with False Concurrency within each core\n' +
+      '\n' +
+      '![](@attachment/ics332-7-2.png)\n' +
+      '\n' +
+      '* In this example there is true concurrency across cores among 2 threads\n' +
+      '\n' +
+      '## True/False Concurrency\n' +
+      '* **The programmer should not have to care/know whether concurrency will be true or false**\n' +
+      '* Regardless, a multi-threaded program should reach **higher interactivity and performance** with True and/or False concurrency\n' +
+      '* Unless all threads are I/O-bound, in which case there could no concurrency\n' +
+      '* Concurrency is not only about cores: there can be concurrency between any two hardware resources\n' +
+      '\n' +
+      '## Race Condition\n' +
+      'Given the following C-function source code, we can translate that into the following NASM assembly language and MPS-like assembly:\n' +
+      '\n' +
+      '![](@attachment/ics332-7-3.png)\n' +
+      '\n' +
+      '* As we can see, incrementing a value is done with 3 instructions.\n' +
+      '* Using 1 thread, let\'s trace the instructions for incrementing a value:\n' +
+      '\n' +
+      '![](@attachment/ics332-7-4.png)\n' +
+      '\n' +
+      '* Now let\'s trace the instructions for incrementing a value using *2* threads:\n' +
+      '\n' +
+      '![](@attachment/ics332-7-5.png)\n' +
+      '\n' +
+      '* The behavior we see from tracing the instructions to incrementing a value with two threads is called a **Race Condition**\n' +
+      '* This is a **concurrency bug** and this bug is called a **lost update**\n' +
+      '* Because of the *non-deterministic* nature of concurrency, lost updates can happen as in our previous example the outcome can vary wildly based on when the context-switches would occur. \n' +
+      '\n' +
+      '### Second Example\n' +
+      '* In general when a thread does x+=1 and an another does x-=1 three things can happen:\n' +
+      '      * Both updates go through (and x is unchanged)\n' +
+      '      * The x+=1 update is lost and the value of x is decremented only\n' +
+      '      * The x-=1 update is lost and the value of x is incremented only\n' +
+      '* Two variables: a and b, both initially set to 1.\n' +
+      '* Thread #1: a+=1; b=a+2;\n' +
+      '* Thread #2: a-=1;\n' +
+      '* Possible interleaving of the instructions assuming that each instruction is executed entirely without being interrupted:\n' +
+      '\n' +
+      '![](@attachment/ics332-7-6.png)\n' +
+      '\n' +
+      '* Possible instructions and values for lost updates:\n' +
+      '\n' +
+      '![](@attachment/ics332-7-7.png)\n' +
+      '\n' +
+      '* Overall, there were 6 possible final (a, b) values\n' +
+      '\n' +
+      '![](@attachment/ics332-7-8.png)\n' +
+      '\n' +
+      '* First bux is output produced for all possible interleaving of lines of code\n' +
+      '* Second box is output produced due to lost update problem\n' +
+      '\n' +
+      '### Race Conditions in the Kernel\n' +
+      '* Consider the following code:\n' +
+      '      * A process places a system call\n' +
+      '      * It begins running kernel code\n' +
+      '      * And then a context switch happens!\n' +
+      '* Modern kernels allow the code above (they\'re called **preemptive kernels**)\n' +
+      '* This means that race conditions can happen in the kernel.\n' +
+      '\n' +
+      '## Critical Sections\n' +
+      '* The parts of the source code where a race condition can happen are **critical sections**\n' +
+      '* **Critical Section** - region of code in which only one thread can be at a time\n' +
+      '* If a thread is already executing code in the critical section, then all other threads are "blocked" before being allowed to enter the critical section\n' +
+      '* Only one thread will then be allowed to enter when a thread leaves the critical section\n' +
+      '* A source code can have multiple and overlapping critical sections. These critical sections also do not have to be contiguous (aka side by side)\n' +
+      '* A common *misconception*: A critical section corresponds to a variable (Critical section corresponds to sections of code)\n' +
+      '* When people say “we need to protect variable x from race conditions” it really means “we need to put **all code that updates** variables x into a critical section”\n' +
+      '* *There are three requirements to execute critical sections*:\n' +
+      '      * **Mutual Exclusion**: If a thread is executing in the critical section, then no other thread can be executing in it\n' +
+      '      * **Progress**: If a thread wants to enter into a critical section, it will enter it at some point in the future\n' +
+      '      * **Bounded Waiting**: Once a thread has declared intent to enter the critical section, there should be a bound on the number of threads that can enter the critical section before it\n' +
+      '\n' +
+      '## Critical Section Mechanisms\n' +
+      '* To combat race conditions, we need to be able to control critical sections of our code--**lock** and **unlock** access to the critical sections.\n' +
+      '* The current solution to this is that our CPUs provide **atomic instructions**\n' +
+      '      * These instructions can never be interrupted\n' +
+      '      * Once a thread begins executing the instruction, it is guaranteed to finish it right away without the CPU doing anything else\n' +
+      '\n' +
+      '## Locks\n' +
+      '* With atomic instructions, we can implement a **lock** data type\n' +
+      '* A lock can be in either of two states: **taken** or **not taken**\n' +
+      '* Two fundamental operations:\n' +
+      '      * acquireLock(): **atomically** acquires (puts it in the "taken" state) the lock if it\'s not taken, otherwise fail.\n' +
+      '      * releaseLock(): releases the lock (puts it in the "not taken" state)\n' +
+      '      \n' +
+      '### Spinlocks\n' +
+      '\n' +
+      '![](@attachment/ics332-7-9.png)\n' +
+      '\n' +
+      '* The good:\n' +
+      '      * A thread will enter the critical section as soon as another has left it\n' +
+      '      * Very little overhead (OS is not involved)\n' +
+      '* The bad:\n' +
+      '      * If the critical section is long and a thread is already in it, a thread wanting to get it will spin for a long time\n' +
+      '      * This wastes CPU cycles, power, and generates heat\n' +
+      '      \n' +
+      '### Blocking Locks\n' +
+      '* If the critical section is long, then a thread shouldn\'t be spinning and instead use a **blocking lock**\n' +
+      '* Idea: If the lock cannot be acquired, ask the OS to put me to sleep (WAITING / BLOCKED state). Whenever the lock is released, then the OS will wake me up.\n' +
+      '\n' +
+      '![](@attachment/ics332-7-10.png)\n' +
+      '\n' +
+      '* The good: no wasted CPU cycles if the wait it long\n' +
+      '* The bad: high-overhead (due to OS involvement), which is bad if the wait is short.\n' +
+      '\n' +
+      '### Overview of Spinlocks and Blocking Locks\n' +
+      '\n' +
+      '![](@attachment/ics332-7-11.png)\n' +
+      '\n' +
+      '* If a critical section is long, use a blocking lock.\n' +
+      '* But you should be making your critical sections as short as possible (short as in the time to run the code, not lines of code)\n' +
+      '* Long critical sections: Only one thread can do work for a while, so we have reduced concurrent execution/parallelism which means reduced interactivity and/or performance.\n' +
+      '* Instead, one should use possibly many short critical sections\n' +
+      '* All OSes provide spinlocks and blocking locks\n' +
+      '* One type of lock is an **adaptive lock**--spins for a while, and then blocks.\n' +
+      '\n' +
+      '## Java\'s Way of Dealing with Race Conditions\n' +
+      '* Java provides locks in *java.util.concurrent.locks.ReentrantLock*\n' +
+      '\n' +
+      '![](@attachment/ics332-7-12.png)\n' +
+      '\n' +
+      '* Java also provides the *synchronized* keyword to put a method inside a critical section\n' +
+      '\n' +
+      '![](@attachment/ics332-7-13.png)\n' +
+      '\n' +
+      '\n';
+  const html11 = converter.makeHtml(note11);
+  target.innerHTML += html11;
+
+  // Deadlocks
+  const note12 = '# 7. Deadlocks\n' +
+      '## Examples\n' +
+      '\n' +
+      '![](@attachment/ics332-7-14.png)\n' +
+      '\n' +
+      '* Thread 1 has lock1 and needs lock2, and Thread 2 has lock2 and needs lock1\n' +
+      '\n' +
+      '![](@attachment/ics332-7-15.png)\n' +
+      '\n' +
+      '## Defining a Deadlock\n' +
+      '* We have a *system* with **Resources** and **Processes**\n' +
+      '* The Resources:\n' +
+      '      * There can be resources of **types**: \\\\( R_1, R_2, ..., R_m \\\\)\n' +
+      '      * There are multiple resource of each type\n' +
+      '* The Processes (or Threads):\n' +
+      '      * \\\\( P_1, P_2, ..., P_n \\\\)\n' +
+      '      * Each process can request a resource of a given type and block/wait until one resource instance of that type becomes available, use a resource, or release a resource.\n' +
+      '* A deadlock state happens if every process \\\\( P_i \\\\) is waiting for a resource instance that is being held by another process.\n' +
+      '* *Three necessary conditions for a deadlock to occur:*\n' +
+      '      * **Mutual exclusion**: At least one resource is non-shareable: at most one process at a time can use it\n' +
+      '      * **No preemption**: Resources cannot be forcibly removed from processes that are holding them\n' +
+      '      * **Circular wait**: There exists a set \\\\( {P_0, P_1, ..., P_p} \\\\) of waiting processes such that (∀i ∈ {0, 1, ...p − 1}) \\\\( P_i \\\\) is waiting for a resource held by \\\\( P_{i + 1} \\\\) and \\\\( P_p \\\\) is waiting for a resource held by \\\\( P_0 \\\\) (There is a circular chain of proceses such that each process holds one or more resources that are being requested by the next process in the chain) \n' +
+      '* If a program is in a state that meets all the three conditions, then it **may** deadlocks (Note: MAY deadlock).\n' +
+      '\n' +
+      '## Resource Allocation/Resource Graph\n' +
+      '* We can describe the system using a system resource-allocation-request graph, where:\n' +
+      '* The set of **vertices** is made of:\n' +
+      '      * The *set of processes*\n' +
+      '      * The *set of resource types*\n' +
+      '      * ![](@attachment/ics332-7-16.png)\n' +
+      '* The set of **directed edges** is made of:\n' +
+      '      * **Request edges** where a request edge is built from a process \\\\( P_i \\\\) to a resource \\\\( R_j \\\\) of \\\\( P_i \\\\) has requested a resource of type \\\\( R_j \\\\)\n' +
+      '      * **Assignment Edges** where an assignment edge is built from an instance of a resource type \\\\( R_j \\\\) to a process \\\\( P_i \\\\) if \\\\( P_i \\\\) holds a resource instance of type \\\\( R_j \\\\)\n' +
+      '      * ![](@attachment/ics332-7-17.png)\n' +
+      '* Note: if a request can be fulfilled, the assignment edge replaces the request edge immediately\n' +
+      '* **Theorem**: *If the resource-allocation-request graph contains no (directed) cycle, then there is no deadlock in the system*\n' +
+      '      * If the graph contains a cycle, then there **may** be a deadlock\n' +
+      '* If there is only one resource instance (black dot) per resource type then--**Theorem**: *The existence of a cycle is a necessary and sufficient condition for the existence of a deadlock*\n' +
+      '\n' +
+      '## More Examples\n' +
+      '### Example 1 (2 lock example from the very start)\n' +
+      '\n' +
+      '![](@attachment/ics332-7-18.png)\n' +
+      '\n' +
+      '### Example 2\n' +
+      '\n' +
+      '![](@attachment/ics332-7-19.png)\n' +
+      '\n' +
+      'Moving the vertices around...\n' +
+      '\n' +
+      '![](@attachment/ics332-7-20.png)\n' +
+      '\n' +
+      '![](@attachment/ics332-7-21.png)\n' +
+      '\n' +
+      '### Example 3 (Has Cycle but NO Deadlock)\n' +
+      '\n' +
+      '![](@attachment/ics332-7-22.png)\n' +
+      '\n' +
+      '* When \\\\( P_4 \\\\) terminates it will release the instance of \\\\( R_2 \\\\) it locked, and that resource will be locked by \\\\( P_3 \\\\). \n' +
+      '* \\\\( P_3 \\\\) will then be able to complete\n' +
+      '* Another option is that \\\\( P_2 \\\\) completes first\n' +
+      '\n' +
+      '![](@attachment/ics332-7-23.png)\n' +
+      '\n' +
+      '## Deadlock Exercise\n' +
+      '\n' +
+      '![](@attachment/ics332-7-24.png)\n' +
+      '\n' +
+      '* M = 1: Can we have a deadlock?\n' +
+      '      * No! Both threads can always get what they want\n' +
+      '* M = 8: Can we have a deadlock?\n' +
+      '      * Yes!\n' +
+      '      * \\\\( P_1 \\\\) acquires 5 locks, context switch\n' +
+      '      * \\\\( P_2 \\\\) acquires 3 locks, context switch\n' +
+      '      * Deadlock (no lock left not taken)\n' +
+      '* M = 4: Can we have a deadlock?\n' +
+      '      * No! Both threads can always get what they want\n' +
+      '* M = 5: Can we have a deadlock?\n' +
+      '      * Yes!\n' +
+      '      * \\\\( P_1 \\\\) acquires 4 locks, context switch\n' +
+      '      * \\\\( P_2 \\\\) acquires 4 locks, context switch\n' +
+      '      * Deadlock (no lock left not taken)\n' +
+      '* Final Answer: we can only have a deadlock for M >= 5\n' +
+      '\n' +
+      '## Strategies against Deadlocks\n' +
+      '* **Prevention** — Just build all programs so that at least one of the previous 3 necessary conditions can never be true, *by design*\n' +
+      '* **Avoidance** — If we are aware of the resources that the processes/threads will use, we could avoid deadlocks, more of a *watchdog approach*\n' +
+      '* **Detection and recovery** — Use algorithms to detect whether a deadlock has happened and try to recover: a *let’s fix it approach*\n' +
+      '\n' +
+      '**NOTE: The lecture slides go into these strategies more into detail, however I do not include them in my notes. Read below to see why.**\n' +
+      'However, if you do want to read them in detail, then the lecture slides related to the strategies against deadlocks is starting from page 57 to 67 of the lecture.\n' +
+      '\n' +
+      '### So, what do OSes actually do in practice to prevent deadlocks????\n' +
+      '* OSes do **NOTHING** to prevent deadlocks in practice.\n' +
+      '\n' +
+      '## Priority Inversion\n' +
+      '* A famous "OS and Deadlocks" problem -- **priority inversion**\n' +
+      '      * Assume that there are 3 processes with different priorities: L < M < H\n' +
+      '      * H needs a resource currently held by L\n' +
+      '      * If M becomes runnable, it will preempt L from running\n' +
+      '      * Therefore L will never release the resource\n' +
+      '      * And therefore H will never run\n' +
+      '      * M has indirectly set the priority of H to the priority of L (since H has to wait for L to release the resource)\n' +
+      '* Solution: **Priority inheritance** - If a process requesting a resource has higher priority than the process locking the resource, the process locking the resource is temporarily given the higher priority.\n';
+  const html12 = converter.makeHtml(note12);
+  target.innerHTML += html12;
+</script>
+
+<script>
+  renderMathInElement(document.body);
+</script>
+</body>
+</html>
