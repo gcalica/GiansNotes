@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ICS 332 - Module 3: OS Overview and Interfaces (OS Services, Interfaces, Designs)</title>
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<a href="../index.html">Back to Home Page</a>
+<i>This note was last edited on Mar/13/2019 12:04 PM</i>
+
+<div id="target"></div>
+<script>
+  const converter = new showdown.Converter();
+  const note = '# 3. OS Services, Interfaces, and Designs\n' +
+      '\n' +
+      '![](@attachment/ics332-3-3.png)\n' +
+      '\n' +
+      '## Operating System Services/Features\n' +
+      '* The OS should provide the following services:\n' +
+      '      * Process Management\n' +
+      '      * Memory Management\n' +
+      '      * Storage Management\n' +
+      '      * I/O Management\n' +
+      '      * Protection and Security\n' +
+      '* The OS should provide the following user interfaces:\n' +
+      '      * Interactives, APIs\n' +
+      '      \n' +
+      '### Process Management\n' +
+      '* Recall that a process is a running program\n' +
+      '      * program: passive (static bytes on disk)\n' +
+      '      * process: active (evolving bytes in RAM, fetch-decode-execute cycle)\n' +
+      '      * There can be many processes for a single program\n' +
+      '* The OS virtualizes the CPU by providing:\n' +
+      '      * Mechanisms for creating and destroying processes\n' +
+      '      * Mechanisms for suspending and resuming processes\n' +
+      '      * Mechanisms for process communication\n' +
+      '      * Mechanisms for process synchronization\n' +
+      '* The OS is responsible for:\n' +
+      '      * Deciding which process runs when and for how long\n' +
+      '      \n' +
+      '### Memory Management\n' +
+      '* The OS virtualizes the RAM by providing:\n' +
+      '      * An address space for each processes (so that the process thinks it’s alone in RAM)\n' +
+      '* The OS is responsible for:\n' +
+      '      * Keeping track of which parts of memory are currently being used and by which process\n' +
+      '      * Deciding which process data to move into and out of memory\n' +
+      '      * Allocating and de-allocating memory space as needed\n' +
+      '* The OS is NOT responsible for the caches (which is 100% managed by the hardware)\n' +
+      '\n' +
+      '### Storage Management\n' +
+      '* The OS virtualizes storage by providing a structured, logical view of data stored as files, which we typically call the File System, which provides mechanisms for:\n' +
+      '      * Creating and deleting files and directories\n' +
+      '      * Manipulating files and directories\n' +
+      '      * Mapping files onto secondary storage\n' +
+      '      * Backing up files onto stable (non-volatile) storage media\n' +
+      '* The OS is responsible for:\n' +
+      '      * Keep track of all files/directories and where they are on disk\n' +
+      '      * Free-space management\n' +
+      '      * Storage allocation\n' +
+      '      \n' +
+      '### I/O Management\n' +
+      '* The OS virtualizes all I/O devices by hiding the specifics of these devices from the user\n' +
+      '* The OS is responsible for:\n' +
+      '      * Memory management of I/O, including buffering (storing data temporarily while it is being transferred), spooling (the overlapping of output of one job with input of other jobs), etc.\n' +
+      '      * General device-driver interface - So that multiple devices can be used with the same kernel as long as they comply with some standard interface\n' +
+      '      * Implementing/loading drivers for specific hardware devices\n' +
+      '\n' +
+      '## OS Roles\n' +
+      '* **Protection**: Mechanisms for controlling access of processes to resources defined by the OS\n' +
+      '* **Security**: Defense of the system against internal and external attacks including denial-of-service, worms, viruses, identity theft, theft of service..\n' +
+      '\n' +
+      '## User Interfaces\n' +
+      '* CLI - Command Line Interace (Shell)\n' +
+      '* GUI - Graphical User Interface\n' +
+      '* Batch - Historical Human Interface\n' +
+      '\n' +
+      '## System Call API\n' +
+      '* System call API (Application Programming interface) is the "lowest-level" interface to OS services\n' +
+      '* GUI and CLI are built on top of this API\n' +
+      '* Every program uses this API either directly, indirectly, or libraries\n' +
+      '* Each system call is identified by a unique number.\n' +
+      '* These numbers are stored in an internal table named **syscall table**\n' +
+      '* System calls make it possible to access **virtualized** hardware resources\n' +
+      '* **System Call Interface** - Set of useful functions that are "Easier-to-use" wrappers" around the raw system calls and that are provided in standard libraries\n' +
+      '\n' +
+      '#### strace \n' +
+      '* Linux Tool to "Spy on processes" and see the system calls they place as they happen\n' +
+      '\n' +
+      '## Timing Programs\n' +
+      '* When measuring System Time with `time`, real time does not equal user time + system time\n' +
+      '* Real Time = User Time + System Time + I/O Time\n' +
+      '\n' +
+      '## Mechanisms and Policies\n' +
+      '* **Policy** - what should be done\n' +
+      '* **Mechanism** - how it should be done\n' +
+      '* Separation of these two principles is important so that one can change policy without changing mechanisms\n' +
+      '\n' +
+      '<hr/>\n' +
+      'The lecture slides go more into detail on history of OS Design implementations\n' +
+      '\n' +
+      '<hr/>\n' +
+      '\n' +
+      '## OS Design: Modules\n' +
+      '* Most modern OSes implement modules\n' +
+      '* **Loadable modules** - Load at **boot time** or at **runtime** when needed\n';
+  const html = converter.makeHtml(note);
+  const target = document.getElementById('target');
+  target.innerHTML = html;
+</script>
+
+<script>
+  renderMathInElement(document.body);
+</script>
+</body>
+</html>
