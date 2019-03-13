@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ICS 332 - Module 7: Synchronization (Race Conditions)</title>
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<a href="../index.html">Back to Home Page</a>
+<i>This note was last edited on Mar/12/2019 05:11 PM</i>
+
+<div id="target"></div>
+<script>
+  const converter = new showdown.Converter();
+  const note = '# 7. Race Conditions\n' +
+      '## False Concurrency\n' +
+      '* **False Concurrency** - when the OS uses context-switching to alternate between processes/threads on a core\n' +
+      '* Example: (the gaps below = context-switching overhead)\n' +
+      '\n' +
+      '![](@attachment/ics332-7-1.png)\n' +
+      '\n' +
+      '* Provides the illusion of concurrency to a human\n' +
+      '* Increases CPU utilization (while a process/thread is blocked on I/O, another can run)\n' +
+      '\n' +
+      '## True Concurrency\n' +
+      '* Since our computers are **multi-core**, so we can have **True Concurrency**\n' +
+      '* Still with False Concurrency within each core\n' +
+      '\n' +
+      '![](@attachment/ics332-7-2.png)\n' +
+      '\n' +
+      '* In this example there is true concurrency across cores among 2 threads\n' +
+      '\n' +
+      '## True/False Concurrency\n' +
+      '* **The programmer should not have to care/know whether concurrency will be true or false**\n' +
+      '* Regardless, a multi-threaded program should reach **higher interactivity and performance** with True and/or False concurrency\n' +
+      '* Unless all threads are I/O-bound, in which case there could no concurrency\n' +
+      '* Concurrency is not only about cores: there can be concurrency between any two hardware resources\n' +
+      '\n' +
+      '## Race Condition\n' +
+      'Given the following C-function source code, we can translate that into the following NASM assembly language and MPS-like assembly:\n' +
+      '\n' +
+      '![](@attachment/ics332-7-3.png)\n' +
+      '\n' +
+      '* As we can see, incrementing a value is done with 3 instructions.\n' +
+      '* Using 1 thread, let\'s trace the instructions for incrementing a value:\n' +
+      '\n' +
+      '![](@attachment/ics332-7-4.png)\n' +
+      '\n' +
+      '* Now let\'s trace the instructions for incrementing a value using *2* threads:\n' +
+      '\n' +
+      '![](@attachment/ics332-7-5.png)\n' +
+      '\n' +
+      '* The behavior we see from tracing the instructions to incrementing a value with two threads is called a **Race Condition**\n' +
+      '* This is a **concurrency bug** and this bug is called a **lost update**\n' +
+      '* Because of the *non-deterministic* nature of concurrency, lost updates can happen as in our previous example the outcome can vary wildly based on when the context-switches would occur. \n' +
+      '\n' +
+      '### Second Example\n' +
+      '* In general when a thread does x+=1 and an another does x-=1 three things can happen:\n' +
+      '      * Both updates go through (and x is unchanged)\n' +
+      '      * The x+=1 update is lost and the value of x is decremented only\n' +
+      '      * The x-=1 update is lost and the value of x is incremented only\n' +
+      '* Two variables: a and b, both initially set to 1.\n' +
+      '* Thread #1: a+=1; b=a+2;\n' +
+      '* Thread #2: a-=1;\n' +
+      '* Possible interleaving of the instructions assuming that each instruction is executed entirely without being interrupted:\n' +
+      '\n' +
+      '![](@attachment/ics332-7-6.png)\n' +
+      '\n' +
+      '* Possible instructions and values for lost updates:\n' +
+      '\n' +
+      '![](@attachment/ics332-7-7.png)\n' +
+      '\n' +
+      '* Overall, there were 6 possible final (a, b) values\n' +
+      '\n' +
+      '![](@attachment/ics332-7-8.png)\n' +
+      '\n' +
+      '* First bux is output produced for all possible interleaving of lines of code\n' +
+      '* Second box is output produced due to lost update problem\n' +
+      '\n' +
+      '### Race Conditions in the Kernel\n' +
+      '* Consider the following code:\n' +
+      '      * A process places a system call\n' +
+      '      * It begins running kernel code\n' +
+      '      * And then a context switch happens!\n' +
+      '* Modern kernels allow the code above (they\'re called **preemptive kernels**)\n' +
+      '* This means that race conditions can happen in the kernel.\n' +
+      '\n' +
+      '## Critical Sections\n' +
+      '* The parts of the source code where a race condition can happen are **critical sections**\n' +
+      '* **Critical Section** - region of code in which only one thread can be at a time\n' +
+      '* If a thread is already executing code in the critical section, then all other threads are "blocked" before being allowed to enter the critical section\n' +
+      '* Only one thread will then be allowed to enter when a thread leaves the critical section\n' +
+      '* A source code can have multiple and overlapping critical sections. These critical sections also do not have to be contiguous (aka side by side)\n' +
+      '* A common *misconception*: A critical section corresponds to a variable (Critical section corresponds to sections of code)\n' +
+      '* When people say “we need to protect variable x from race conditions” it really means “we need to put **all code that updates** variables x into a critical section”\n' +
+      '* *There are three requirements to execute critical sections*:\n' +
+      '      * **Mutual Exclusion**: If a thread is executing in the critical section, then no other thread can be executing in it\n' +
+      '      * **Progress**: If a thread wants to enter into a critical section, it will enter it at some point in the future\n' +
+      '      * **Bounded Waiting**: Once a thread has declared intent to enter the critical section, there should be a bound on the number of threads that can enter the critical section before it\n' +
+      '\n' +
+      '## Critical Section Mechanisms\n' +
+      '* To combat race conditions, we need to be able to control critical sections of our code--**lock** and **unlock** access to the critical sections.\n' +
+      '* The current solution to this is that our CPUs provide **atomic instructions**\n' +
+      '      * These instructions can never be interrupted\n' +
+      '      * Once a thread begins executing the instruction, it is guaranteed to finish it right away without the CPU doing anything else\n' +
+      '\n' +
+      '## Locks\n' +
+      '* With atomic instructions, we can implement a **lock** data type\n' +
+      '* A lock can be in either of two states: **taken** or **not taken**\n' +
+      '* Two fundamental operations:\n' +
+      '      * acquireLock(): **atomically** acquires (puts it in the "taken" state) the lock if it\'s not taken, otherwise fail.\n' +
+      '      * releaseLock(): releases the lock (puts it in the "not taken" state)\n' +
+      '      \n' +
+      '### Spinlocks\n' +
+      '\n' +
+      '![](@attachment/ics332-7-9.png)\n' +
+      '\n' +
+      '* The good:\n' +
+      '      * A thread will enter the critical section as soon as another has left it\n' +
+      '      * Very little overhead (OS is not involved)\n' +
+      '* The bad:\n' +
+      '      * If the critical section is long and a thread is already in it, a thread wanting to get it will spin for a long time\n' +
+      '      * This wastes CPU cycles, power, and generates heat\n' +
+      '      \n' +
+      '### Blocking Locks\n' +
+      '* If the critical section is long, then a thread shouldn\'t be spinning and instead use a **blocking lock**\n' +
+      '* Idea: If the lock cannot be acquired, ask the OS to put me to sleep (WAITING / BLOCKED state). Whenever the lock is released, then the OS will wake me up.\n' +
+      '\n' +
+      '![](@attachment/ics332-7-10.png)\n' +
+      '\n' +
+      '* The good: no wasted CPU cycles if the wait it long\n' +
+      '* The bad: high-overhead (due to OS involvement), which is bad if the wait is short.\n' +
+      '\n' +
+      '### Overview of Spinlocks and Blocking Locks\n' +
+      '\n' +
+      '![](@attachment/ics332-7-11.png)\n' +
+      '\n' +
+      '* If a critical section is long, use a blocking lock.\n' +
+      '* But you should be making your critical sections as short as possible (short as in the time to run the code, not lines of code)\n' +
+      '* Long critical sections: Only one thread can do work for a while, so we have reduced concurrent execution/parallelism which means reduced interactivity and/or performance.\n' +
+      '* Instead, one should use possibly many short critical sections\n' +
+      '* All OSes provide spinlocks and blocking locks\n' +
+      '* One type of lock is an **adaptive lock**--spins for a while, and then blocks.\n' +
+      '\n' +
+      '## Java\'s Way of Dealing with Race Conditions\n' +
+      '* Java provides locks in *java.util.concurrent.locks.ReentrantLock*\n' +
+      '\n' +
+      '![](@attachment/ics332-7-12.png)\n' +
+      '\n' +
+      '* Java also provides the *synchronized* keyword to put a method inside a critical section\n' +
+      '\n' +
+      '![](@attachment/ics332-7-13.png)\n' +
+      '\n' +
+      '\n';
+  const html = converter.makeHtml(note);
+  const target = document.getElementById('target');
+  target.innerHTML = html;
+</script>
+
+<script>
+  renderMathInElement(document.body);
+</script>
+</body>
+</html>
