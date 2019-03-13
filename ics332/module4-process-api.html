@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ICS 332 - Module 4: Processes (Process API)</title>
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<a href="../index.html">Back to Home Page</a>
+<i>This note was last edited on Mar/12/2019 08:54 PM</i>
+
+<div id="target"></div>
+<script>
+  const converter = new showdown.Converter();
+  const note = '# 4. Process API\n' +
+      '## Process Creation\n' +
+      '* A process can create processes\n' +
+      '* If process A creates process B, we say that "A is the **parent** of B", and "B is the **child** of A"\n' +
+      '* A process can have at most *one* parent; a process can have many children\n' +
+      '* Each process has a **PID** (Process ID), which is an integer\n' +
+      '* The PID of the parent of a process is called the **PPID** (Parent Process ID)\n' +
+      '* Linux command to check processes: **ps**\n' +
+      '* After creating a child, the parent continus executing. But at any point, even right away, it can wait for the child\'s completion.\n' +
+      '* The child can be:\n' +
+      '      * either a complete clone of the parent (i.e., have an exact copy of the address space)\n' +
+      '      * or be an entirely new program\n' +
+      '      \n' +
+      '## fork() System Call\n' +
+      '* *fork()* is a system call that creates a new process.\n' +
+      '* The child is an almost exact copy of the parent except for:\n' +
+      '      * Its PID (two processes can’t have the same ID)\n' +
+      '      * Its PPID (its parent cannot also be its grandparent)\n' +
+      '      * Its resource utilization (set to 0 since it’s just started)\n' +
+      '* After the call to fork(), parent continus executing and the child begins executing.\n' +
+      '* fork() returns *0 to the child* and returns the *child\'s PID to the parent*; *less than 0* if fork() failed.\n' +
+      '\n' +
+      '### Examples\n' +
+      '\n' +
+      '#### Example 1\n' +
+      '\n' +
+      '![](@attachment/ics332-4-7.png)\n' +
+      '\n' +
+      '........Let\'s trace it:\n' +
+      '\n' +
+      '![](@attachment/ics332-4-8.png)\n' +
+      '\n' +
+      '![](@attachment/ics332-4-9.png)\n' +
+      '\n' +
+      '![](@attachment/ics332-4-10.png)\n' +
+      '\n' +
+      '![](@attachment/ics332-4-11.png)\n' +
+      '\n' +
+      '![](@attachment/ics332-4-12.png)\n' +
+      '\n' +
+      '* Both processes coexist **independently**; the code is executed independently in the Parent and in the Child\n' +
+      '\n' +
+      '#### Example 2\n' +
+      '\n' +
+      '![](@attachment/ics332-4-13.png)\n' +
+      '\n' +
+      '#### Example 3\n' +
+      '\n' +
+      '![](@attachment/ics332-4-14.png)\n' +
+      '\n' +
+      '#### Example 4\n' +
+      '\n' +
+      '![](@attachment/ics332-4-15.png)\n' +
+      '\n' +
+      '![](@attachment/ics332-4-16.png)\n' +
+      '\n' +
+      '![](@attachment/ics332-4-17.png)\n' +
+      '\n' +
+      '![](@attachment/ics332-4-18.png)\n' +
+      '\n' +
+      '![](@attachment/ics332-4-19.png)\n' +
+      '\n' +
+      '![](@attachment/ics332-4-20.png)\n' +
+      '\n' +
+      '* Total count is **12** processes\n' +
+      '\n' +
+      '## The exec() family\n' +
+      '* The exec system call family **replaces the process image** (i.e., process address space) **by that of a specific program** (stored on disk as an executable)\n' +
+      '      * For example: <code>execv("/bin/ls", ...)</code>. The */bin/ls* is the specific program that replaces the process image.\n' +
+      '* The call to exec() never returns unless there is an error\n' +
+      '\n' +
+      '## Zombies 🧟\n' +
+      '\n' +
+      '![](@attachment/ics332-4-21.png)\n' +
+      '\n' +
+      '* When a child process terminates, it remains as a **zombie** in the **Terminated*8 state\n' +
+      '* Rationale: The parent process may want to know about the status of a child process.\n' +
+      '      * e.g., Run this first program and when it is finished, run that one...\n' +
+      '      * Therefore, the parent may want to *wait* for child\'s completion\n' +
+      '* Zombies do not use hardware resources but each zombies uses a slot in the Process Table (which can eventually fill up the Process Table)\n' +
+      '* A zombie lingers on until **its parent has acknowledged its termination** or **its parent dies**\n' +
+      '* The zombie is then *reaped* by the OS\n' +
+      '\n' +
+      '## Process Terminations\n' +
+      '* A process terminates itself with the exit() system call, which takes as argument an integer called the process *exit/return/error value/code*\n' +
+      '* All resources of the process are then deallocated by the OS\n' +
+      '* A process can also cause the termination of another process; this is done using **signals** and the kill() system call\n' +
+      '\n' +
+      '## Signals\n' +
+      '* **Signals** are **software interrupts** (i.e., a signal is an asynchronous event that the program must act upon in some way)\n' +
+      '* The OS defines a number of signals, each with a name and a number, and they can be used for process synchronization.\n' +
+      '* Each signal causes a default behavior in the process (e.g., the SIGINT signal causes the process to terminate)\n' +
+      '* The signal() system call allows a process to specify what action to do on a signal\n' +
+      '\n' +
+      '## Back to zombies: wait() and waitpid()\n' +
+      '* A parent can wait for a child\'s completion\n' +
+      '* wait() system call blocks until any child completes and returns the pid of the completed child and the child\'s exit code\n' +
+      '* waitpid() system call blocks until a specific child completes and can be made non-blocking.\n' +
+      '* Therefore, one way to avoid zombies is to always call wait() or waitpid()\n' +
+      '\n' +
+      '### SIGCHILD signal\n' +
+      '* When a child exists, a SIGCHILD signal is sent to the parent\n' +
+      '* The typical convenient way to avoid zombies altogether:\n' +
+      '      * Parent associates a handler to SIGCHILD\n' +
+      '      * The handler calls wait()\n' +
+      '      * This way all children terminates are acknowledged\n' +
+      '\n' +
+      '## Orphans\n' +
+      '* A child process becomes an **oprhan** when its parent dies before the child process dies.\n' +
+      '* The orphan is **adopted*8 by the process with **PID 1**\n' +
+      '* To create a process that is completely separate from the parent: create a grandchild and kill its parent\n' +
+      '      * The grandchild will be adopted by the process with PID 1\n' +
+      '      \n' +
+      '## Overview of fork()\n' +
+      '\n' +
+      '![](@attachment/ics332-4-22.png)\n' +
+      '\n' +
+      '## Miscellanous Info\n' +
+      '* Although Windows OS does not have fork(), it can still create processes using CreateProcess() which combines fork() and exec().\n' +
+      '* WaitForSingleObject() for Windows is equivalent to wait()\n' +
+      '* TerminateProcess() for Windows is similar to kill()\n' +
+      '* Java can create only processes extrnal to the JVM\n' +
+      '\n';
+  const html = converter.makeHtml(note);
+  const target = document.getElementById('target');
+  target.innerHTML = html;
+</script>
+
+<script>
+  renderMathInElement(document.body);
+</script>
+</body>
+</html>
