@@ -511,7 +511,121 @@
   target.innerHTML += html5;
 
   // Process Mechanisms
-  const note6 = '';
+  const note6 = '# 4. Process Mechanisms\n' +
+      '## Direct Execution\n' +
+      '\n' +
+      '![](@attachment/ics332-4-23.png)\n' +
+      '\n' +
+      '* This Direct Execution approach has two big problems:\n' +
+      '* Problem #1: If the process needs to access hardware resources, then the only option is to give the process full access to the hardware\n' +
+      '* Problem #2: How do we kick a process out of the CPU and give the CPU to another process?\n' +
+      '* We need to *limit* the way in which a process runs on the hardware\n' +
+      '* In other words, we need mechanisms for virtualizing the CPU to solve both problems above\n' +
+      '\n' +
+      '## Limited Execution: Restricted Operations\n' +
+      '* The OS cannot just be a library that a user program can call at any time\n' +
+      '* We then build CPUs to have two kinds of instructions:\n' +
+      '      * **Unprotected** instruction that a program can execute at any time\n' +
+      '      * **Protected (or Privileged)** instructions that do special things and a program can\'t just execute\n' +
+      '      \n' +
+      '## User Mode vs Kernel Mode\n' +
+      '* All modern CPUs support at least two modes of execution:\n' +
+      '      * **User Mode** where protected instructions cannot be executed\n' +
+      '      * **Kernel Mode** where all instructions can be executed\n' +
+      '* User code executes in user mode; Kernel code executes in Kernel Mode\n' +
+      '* THe mode is indicated by a status bit (**mode bit**) in a protected control register in the CPU\n' +
+      '* THe CPU checks the mode bit before executing a protected instruction\n' +
+      '* In the Fetch-Decode-Execute cycle, we add the following steps to the Decode stage:\n' +
+      '      * Decode instruction\n' +
+      '      * If the instruction is protected and the mode bit is not set to "Kernel mode", abort and raise a **trap** (the OS responds by terminating the program, saying something like "not allowed")\n' +
+      '      * Otherwise, execute the instruction\n' +
+      '* FYI, there are actually multiple modes\n' +
+      '\n' +
+      '## Which instructions are protected?\n' +
+      '* The following are protected instructions on modern OSes:\n' +
+      '      * Updating the mode bit\n' +
+      '      * Halt the CPU\n' +
+      '      * Update CPU control registers\n' +
+      '      * Change system clock\n' +
+      '      * Read/Write I/O device control/status registers\n' +
+      '      * In general interaction with hardware components\n' +
+      '* Therefore, all these operations can only happen in Kernel mode and **only kernel code can use them**\n' +
+      '* The kernel is the only trusted software component that is allowed to itneract with hardware ocmponents directly\n' +
+      '\n' +
+      '### What about system calls?\n' +
+      '* CPUs have a "system call instruction"\n' +
+      '* This instruction is a trap, to which the OS must react\n' +
+      '* Remember, the OS can be seen as an event handler\n' +
+      '\n' +
+      '## Trap Table\n' +
+      '* At boot time, the OS initializes a **Trap Table** (called Interrupt Descriptor Table on x86 architecture)\n' +
+      '* Trap Table is stored in *RAM*, and the CPU has a register that points to it\n' +
+      '* For each event type that the CPU could receive, this table indicates the address in the kernel of the code that should be run to react to the event\n' +
+      '* Whenever an event occurs, the CPU can just do:\n' +
+      '      * Look at the Trap Table in RAM\n' +
+      '      * Lookup the entry in the Trap Table for the event and find the kernel handler\'s address\n' +
+      '      * Set the mode bit to "Kernel"\n' +
+      '      * Jump to the kernel handler and fetch-decode-excute it\n' +
+      '      \n' +
+      '![](@attachment/ics332-4-24.png)\n' +
+      '\n' +
+      '## The "Trap" instruction\n' +
+      '* A CPU has an instruction to causes the “I want to do a system call” event, often called the “trap instruction”\n' +
+      '* The trap instruction does:\n' +
+      '      * Set the mode bit to “kernel”\n' +
+      '      * Jump to the “handle system call” kernel code\n' +
+      '      * Set the mode bit to “user”\n' +
+      '      * Jump back to user code\n' +
+      '* There are many system calls, but a single system call handler\n' +
+      '* Therefore, the user must specify which system call to run as a **system call number**\n' +
+      '* The handler checks that the system call number if valid, and then\n' +
+      'jumps to the corresponding kernel code\n' +
+      '\n' +
+      '![](@attachment/ics332-4-25.png)\n' +
+      '\n' +
+      '## Restricted Operations: Whole Summary\n' +
+      '* You write your user program, which calls a standard library function that places a system call, e.g., write()\n' +
+      '* When the trap instruction is executed, the CPU sets the mode bit to kernel, figures out this is a “syscall” event, looks up the Trap Table, finds out in it the address of the handler for that event in the kernel code, and jumps to that code\n' +
+      '* The handler code looks at the system call number passed to the trap\n' +
+      'instruction, looks up its table of system calls, finds the address of\n' +
+      'the code for that particular system call, and jumps to that code\n' +
+      '* The system call code is executed\n' +
+      '* The system call code returns to the system call handler, which sets the mode bit to “user” and returns to your program\n' +
+      '* We\'ve not dealt with our original Problem #1 in Direct Execution (which was how to prevent user programs from getting full access to hardware) with mode bit, trap instruction, and system calls.\n' +
+      '* Now let\'s deal with Problem #2 (which was how to kick a process out of the CPU and give the CPU to another process) by enforcing some *switching between processes*\n' +
+      '\n' +
+      '## How can the OS regain control of the CPU?\n' +
+      'The **Cooperative Approach**\n' +
+      '* We just assume the processes are nice and willingly give the up the CPU frequently. \n' +
+      '* But something like a <code>while(1) {}</code> program can lock up the machine and not give up the CPU.\n' +
+      '* We can avoid this using a **timer**\n' +
+      '\n' +
+      '## Timer Interrupt\n' +
+      '* To deal with non-cooperative processes, whenever the OS starts the fetch-decode-execute cycle of a process it sets a timer.\n' +
+      '* When the timer goes off, a trap is generated, so that the CPU will stop what it\'s doing and notify thr OS\n' +
+      '* The kernel has a handler for this trap\n' +
+      '* This handler is the way in which the OS regains control (OS can say you\'ve had enough of the CPU, let me kick you off the CPU and pick another process to run)\n' +
+      '* Setting and enabling/disabling the timer are privlieged instructions\n' +
+      '* Now we have the mechanism to regain control\n' +
+      '* Now we learn how to switch between processes\n' +
+      '\n' +
+      '## Context Switching\n' +
+      '* The mechanism to kick a process off the CPU and give the CPU to another process is called a **context switch**\n' +
+      '      * Save the context of the running process to the PCB in RAM \n' +
+      '      * Make its state Ready\n' +
+      '      * Restore from the PCB in RAM the context of a Ready process \n' +
+      '      * Make its state Running\n' +
+      '      * Restart its fetch-decode-execute cycle\n' +
+      '* The context switch code is in assembly (Figure 6.4 in OSTEP)\n' +
+      '* It should be **as fast as possible** because it is **pure overhead**\n' +
+      '* Context switch is a **mechanism**, and deciding when to context switch is a **policy**, which is called **scheduling**\n' +
+      '\n' +
+      '![](@attachment/ics332-4-26.png)\n' +
+      '\n' +
+      '\n' +
+      '\n' +
+      '\n' +
+      '\n';
   const html6 = converter.makeHtml(note6);
   target.innerHTML += html6;
 
