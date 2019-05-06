@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ICS 332 - Module 9 to Module 13</title>
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<a href="../index.html">Back to Home Page</a>
+<i>This note was last edited on May/05/2019 09:03 PM</i>
+
+<div id="target"></div>
+<script>
+  //Module 9
+  const converter = new showdown.Converter();
+  // Address Virtualization
+  const note1 = '';
+  const html1 = converter.makeHtml(note1);
+  const target = document.getElementById('target');
+  target.innerHTML = html1;
+
+  // Swapping
+  const note2 = '';
+  const html2 = converter.makeHtml(note2);
+  target.innerHTML += html2;
+
+  // Dynamic Linking ane Loading
+  const note3 = '';
+  const html3 = converter.makeHtml(note3);
+  target.innerHTML += html3;
+
+
+  // Module 10
+  // COunting and Addressing
+  const note4 = '';
+  const html4 = converter.makeHtml(note4);
+  target.innerHTML += html4;
+
+
+  // Module 11
+  // Paging I
+  const note5 = '';
+  const html5 = converter.makeHtml(note5);
+  target.innerHTML += html5;
+
+  // Paging II
+  const note6 = '';
+  const html6 = converter.makeHtml(note6);
+  target.innerHTML += html6;
+
+  // Paging III
+  const note7 = '';
+  const html7 = converter.makeHtml(note7);
+  target.innerHTML += html7;
+
+  // Paging IV
+  const note8 = '';
+  const html8 = converter.makeHtml(note8);
+  target.innerHTML += html8;
+
+
+  // Module 12
+  // Distributed Computing
+  const note9 = '# 12. Introduction to Distributed Computing\n' +
+      '## Distributed Computing Issue #1: Correctness\n' +
+      '* Goal: Design an algorithm so that multiple processes accomplish a common goal **correctly**\n' +
+      '      * By exchanging the right messages at the right times\n' +
+      '* We need an algorithm that each process runs, that terminates, and that is correct\n' +
+      '* We could design a **centralized** system: there is a special process that knows about all other processes (e.g., some server running somewhere)\n' +
+      '      * Easy algorithm: just ask the special process who the leader should be\n' +
+      '* But centralized systems have problems (e.g., what if the special process fails???)\n' +
+      '* So we need a **distributed** algorithm...\n' +
+      '* If every process in the system knows about all other processes it’s easy: pick the process with the lowest ID as\n' +
+      'the leader!\n' +
+      '* But typically, **processes don’t know the full picture** \n' +
+      '      * The full picture is too big\n' +
+      '      * The full picture changes all the time\n' +
+      '* In general, maintaining global knowledge about the system doesn’t scale\n' +
+      '\n' +
+      '## Distributed Computing Issue #2: Fault-Tolerance\n' +
+      '* When you write a program that runs on a single computer, and that computer crashes, you declare it a catastrophe that’s not your fault\n' +
+      '* But a (good) distributed program should handle its processes unexpectedly dying/disappearing because that’s a common occurrence at large scale\n' +
+      '* **First Question**: how do you detect failures?\n' +
+      '      * A process hasn’t answered for a while... Is is dead?\n' +
+      '      * Or is this just a temporary network problem and it will\n' +
+      '      come back?\n' +
+      '      * How long do I wait for?\n' +
+      '      * And then if I’ve created a replacement process and that\n' +
+      '      other process comes back, what do I do?\n' +
+      '* **Second Question**: how do you handle failures?\n' +
+      '* Perhaps you can duplicate processes, so that if one fails the other one survives\n' +
+      '* But then these processes must be in perfect synchrony, which may be impossible, especially over a network\n' +
+      '* Or you have a clever algorithm that adapts to failures gracefully, but that’s difficult\n' +
+      '* You can probably envision how hard this is!\n' +
+      '* Bottom Line: When you add failures into the mix, things are even more difficult\n' +
+      '\n' +
+      '## Distributed Computing Issue #3: Performance\n' +
+      '* Say you want to perform a big/long computation with a lot of data\n' +
+      '* You then ”enlist” computers and databases\n' +
+      '      * You have some data on your laptop\n' +
+      '      * There is some data in various databases on-line\n' +
+      '      * You have accounts on compute and storage machines in various places\n' +
+      '      * All interconnected via the network\n' +
+      '* Problem: It’s not because you throw a bunch of hardware resources at your application that it will go faster\n' +
+      '      * Networks are not infinitely fast\n' +
+      '      * Not all computers are equal\n' +
+      '      * Computation cannot run without data\n' +
+      '      * Perhaps using a fast, but too remote computer, is not worth it\n' +
+      '* Bottom Line: You have to orchestrate data transfers and computations carefully to get good performance\n' +
+      '      * These are ”parallel computing” problems that people in HPC (High Performance Computing) study\n' +
+      '\n';
+  const html9 = converter.makeHtml(note9);
+  target.innerHTML += html9;
+
+  // Module 13
+  // Mass Storage
+  const note10 = '# 13. Mass Storage\n' +
+      '## Magnetic Disks\n' +
+      '* Magnetic disks (hard drives) are still the most common secondary storage devices today\n' +
+      '* They are "messy" (errors, bad blocks, missed seeks, moving parts)\n' +
+      '* The OS used to hide all the messiness from higher-level software (since programs shouldn\'t have to know anything about disk structure)\n' +
+      '\n' +
+      '![](@attachment/ics332-13-1.png)\n' +
+      '\n' +
+      '## Hard Drive Data Access\n' +
+      '* A hard drive needs several pieces of information for each data access\n' +
+      '      * Platter #, track #, sector #, etc.\n' +
+      '* Nowadays, hard drives comply with standard interfaces (EIDE, ATA, SATA, USB, Fiber Channel, SCSI)\n' +
+      '* The hard drives, in these interfaces, is seen as an *array of logical blocks (512 bytes)*\n' +
+      '* The device, in hardware, does the translation between the block # and the platter #, sector #, track #, etc.\n' +
+      '* This is good:\n' +
+      '      * The kernel code to access the disk is straightforward\n' +
+      '      * The controller can do a lot of work, e.g., transparently hiding bad blocks\n' +
+      '      \n' +
+      '### Hard Drive Performance\n' +
+      '* Hard drives are **slow**\n' +
+      '* Data request performance depends on three steps\n' +
+      '      * **Seek** – moving the disk arm to the correct cylinder; Depends on how fast disk arm can move (increasing very slowly over\n' +
+      'the years)\n' +
+      '      * **Rotation** – waiting for the sector to rotate under the head; Depends on rotation rate of disk (increasing slowly over the years)\n' +
+      '      * **Transfer** – transferring data from surface into disk controller electronics, sending it back to the host; Depends on density (increasing rapidly-ish over the years)\n' +
+      '* **We must minimize seek and rotation time**; In current hard drives they are of the same order of magnitude\n' +
+      '\n' +
+      '## Disk Scheduling\n' +
+      'Given the current position of the head (cylinder/track) and given a list of blocks to read, which block should we read next?\n' +
+      '\n' +
+      '### FIFO\n' +
+      '* Simplest policy is First in, First Out\n' +
+      '\n' +
+      '### Shortest Seek Time First (SSTF)\n' +
+      '* Select the request that\'s closest to the current head position\n' +
+      '* Always goes to the request in the *nearest track*\n' +
+      '* SSTF may cause **starvation**\n' +
+      '* One solution is to used the **elevator algorithm (SCAN, F-SCAN)**\n' +
+      '      * The head just goes through the tracks back and forth and serves requests as they come\n' +
+      '      * Requests that come it for the current track may have to wait until the “elevator” comes back\n' +
+      '      * But this is really not good to minimize request service time\n' +
+      '      \n' +
+      '### The Ultimate Algorithm: Shortest Access Time First (SATF)\n' +
+      '* Account for *seek time* **and** *rotation time* to pick the next request\n' +
+      '* All these algorithms are implemented in the *disk controller*\n' +
+      '\n' +
+      '## RAID\n' +
+      '* **Disks are unreliable, slow, and cheap**\n' +
+      '* Simple idea: let\'s use redundancy\n' +
+      '      * Increases reliability (if one fails, you have another one)\n' +
+      '      * Increases speed (Aggregate disk bandwith if data is split across disks)\n' +
+      '* **Redundant Array of Independent Disks**\n' +
+      '      * The OS can implement it with multiple bus-attached disks\n' +
+      '      * An intelligent RAID controller in hardware\n' +
+      '      * A “RAID array” as a stand-alone box\n' +
+      '      \n' +
+      '### RAID Techniques\n' +
+      '* **Data Mirroring**\n' +
+      '        * Keep the same data on multiple disks\n' +
+      '        * Every write is to each mirror, whicht akes time\n' +
+      '* **Data Striping**\n' +
+      '        * Keep data split across multiple disks to allow parallel reads\n' +
+      '* **Parity Bits**\n' +
+      '        * Keep information from which to reconstruct lost bits due to a drive failing\n' +
+      '* Combination of these techniques are called "levels" (RAID levels)\n' +
+      '\n' +
+      '#### RAID 0\n' +
+      '* Data is striped across multiple disks\n' +
+      '      * Using a fixed strip size\n' +
+      '* Gives the illusion of a larger disk with high bandwidth when reading/writing a file\n' +
+      '      * Accessing a single strip is not any faster\n' +
+      '* Improves performance, but not reliability\n' +
+      '* Useful for high-performance applications\n' +
+      '\n' +
+      '![](@attachment/ics332-13-2.png)\n' +
+      '\n' +
+      '#### RAID 1\n' +
+      '* Mirroring (also called shadowing)\n' +
+      '* Write every written byte to 2 disks\n' +
+      '      * Uses twice as many disks as RAID 0\n' +
+      '* Reliability is ensured unless you have (extremely unlikely) simultaneous failures \n' +
+      '* Performance can be boosted by reading from the disk with the fastest seek time\n' +
+      '      * The one with the arm the closest to the target cylinder\n' +
+      '\n' +
+      '![](@attachment/ics332-13-3.png)\n' +
+      '\n' +
+      '#### RAID 3\n' +
+      '* **Bit-interleaved parity**\n' +
+      '      * Each write goes to all disks, with each disk storing one bit\n' +
+      '      * A parity bit is computed, stored, and used for data recovery\n' +
+      '* Example with 4 disks an 1 parity disk\n' +
+      '      * Say you store bits 0 1 1 0 on the 4 disks\n' +
+      '      * The parity bit stores the XOR of those bits: (((0 xor 1) xor 1) xor 0) = 0\n' +
+      '      * Say you lose one bit: 0 ? 1 0\n' +
+      '      * You can XOR the remaining bits with the parity bit to recover the lost bit: (((0 xor 0) xor 1) xor 0) = 1\n' +
+      '      * Say you lose a different bit: 0 1 1 ?\n' +
+      '      * The XOR still works: (((0 xor 1) xor 1) xor 0) = 0\n' +
+      '* Bit-level striping increases performance\n' +
+      '* XOR overhead for each write (done in hardware)\n' +
+      '* Time to recovery is long (a bunch of XOR’s)\n' +
+      '\n' +
+      '#### RAID 4, 5, and 6\n' +
+      '* RAID 4: Basically like RAID 3, but interleaving it with strips\n' +
+      '      * A small read will involve a single disk\n' +
+      '* RAID 5: Like RAID 4, but parity is spread all over the disks as opposed to having just one parity disk:\n' +
+      '\n' +
+      '![](@attachment/ics332-13-4.png)\n' +
+      '\n' +
+      '* RAID 6: like RAID 5, but allows simultaneous disk failures (rarely used)\n' +
+      '\n' +
+      '## OS Management\n' +
+      'The OS is responsible for:\n' +
+      '* Formatting the disk\n' +
+      '* Botting from disk\n' +
+      '* Bad-block recovery\n' +
+      '\n' +
+      '## Physical disk formatting\n' +
+      '* Divides the disk into sectors\n' +
+      '* Fills the disk with a special data structure for each sector\n' +
+      '      * A header, a data area (512 bytes), and a trailer\n' +
+      '* In the header and trailer is the sector number, and extra bits for error-correcting code (ECC)\n' +
+      '      * The ECC data is updated by the disk controller on each write and checked on each read\n' +
+      '      * If only a few bits of data have been corrupted, the controller can use the ECC to fix those bits\n' +
+      '      * Otherwise the sector is now known as “bad” which is reported to the OS\n' +
+      '* Typically all done at the factory before shipping\n' +
+      '\n' +
+      '## Logical formatting\n' +
+      '* The OS first partitions the disk into one or more groups of cylinders: **the partitions**\n' +
+      '* The OS then treats each partition as a separate disk\n' +
+      '* Then, **file system** information is written to the partitions\n' +
+      '\n' +
+      '## Boot blocks\n' +
+      '* There is a small ROM-stored bootstrap program\n' +
+      '* This program reads and loads a full bootstrap stored on disk\n' +
+      '* The full bootstrap is stored in the boot blocks at a fixed location on a boot disk/partition (**master boot record**)\n' +
+      '* This program then loads the OS\n' +
+      '\n' +
+      '## Bad blocks\n' +
+      '* Sometimes, data on the disk is corrupted and the ECC can’t fix it\n' +
+      '* Errors occur due to:\n' +
+      '      * Damage to the platter’s surface\n' +
+      '      * Defect in the magnetic medium due to wear\n' +
+      '      * Temporary mechanical error (e.g., head touching the platter)\n' +
+      '      * Temporary thermal fluctuation\n' +
+      '* The OS gets a notification\n' +
+      '* Upon reboot, the disk controller can be told to replace a bad block by a spare: **sector sparing**\n' +
+      '  * Each time the OS asks for the bad block, it is given the spare instead\n' +
+      '  * The controller maintains an entire block map\n' +
+      '* *Problem*: the OS’s view of disk locality may be very different from the physical locality\n' +
+      '* Solution #1: Spares in each cylinders and a spare cylinder\n' +
+      '      * Always try to find spares “close” to the bad block\n' +
+      '* Solution #2: Shuffle sectors to bring the spare block next to the bad block\n' +
+      '      * Called **sector splitting**\n' +
+      '      \n' +
+      '## Solid State Drives (SSDs)\n' +
+      '* Purely based on solid-state memory\n' +
+      '      * Flash-based: persistent but slower (common case)\n' +
+      '      * DRAM-based: faster but volatile\n' +
+      '\n' +
+      '### Advantages\n' +
+      '* No moving parts!\n' +
+      '* Flash SSDs competitive vs. hard drives:\n' +
+      '      * faster startups and reads\n' +
+      '      * silent, low-heat, low-power\n' +
+      '      * more reliable\n' +
+      '      * less heavy\n' +
+      '      * getting larger and cheaper, close to HDD\n' +
+      '      * lower lifetime due to write wear off (used to be a big deal, but now ok especially for personal computers)\n' +
+      '      * slower writes (????)\n' +
+      '\n' +
+      '### SSD Structure\n' +
+      '* The **flash cell**\n' +
+      '* The **page** (4 KiB)\n' +
+      '* The **block** (128 pages: 512 KiB)\n' +
+      '\n' +
+      '#### SSDs have slow writes???\n' +
+      '* SSD writes are considered slow because of **write amplification**: as time goes on, a write of x bytes of data in fact entails writing y > x bytes of data!!\n' +
+      '* Reason:\n' +
+      '      * The smallest unit that can be **read**: a 4-KiB page\n' +
+      '      * The smallest unit that can be **erased**: a 512-KiB block\n' +
+      '      \n' +
+      '## Write Amplification Example\n' +
+      '\n' +
+      '![](@attachment/ics332-13-5.png)\n' +
+      '\n' +
+      '![](@attachment/ics332-13-6.png)\n' +
+      '\n' +
+      '![](@attachment/ics332-13-7.png)\n' +
+      '\n' +
+      '* To write 4KiB + 8KiB + 16KiB = 28KiB of application data, we had to write 4KiB + 8KiB + 24KiB = 36KiB of data to the SSD\n' +
+      '* As the drive fills up and files get written/modified/deleted, writes end up amplified\n' +
+      '* The controller keeps writing on the SSD until full, before it attempts any rewrite\n' +
+      '* In the end, performance is still good relative to that of an HDD\n' +
+      '* The OS can, in the background, clean up block with invalid pages so that they’re easily writable\n' +
+      '\n' +
+      '## SSDs vs HDDs\n' +
+      '* SSDs have many advantages of HDDs\n' +
+      '      * Random read latency much smaller\n' +
+      '      * SSDs are great at parallel read/write\n' +
+      '      * SSDs are great at small writes\n' +
+      '      * SSDs are great for random access in general\n' +
+      '      * Which is typically the bane of HDDs\n' +
+      '      * they are getting cheaper\n' +
+      '* Note that not all SSDs are made equal\n' +
+      '\n' +
+      '## Conclusion\n' +
+      '* HDDs are slow, large, unreliable, and cheap\n' +
+      '* Disk scheduling helps with performance\n' +
+      '* Redundancy is a way to cope with slow and unreliable HDDS (RAID)\n' +
+      '* SSDs provide a radically different approach that may replace HDDs in the future\n' +
+      '* The OS is involved minimally in disk management functions as the drive controllers do most of the work\n' +
+      '\n';
+  const html10 = converter.makeHtml(note10);
+  target.innerHTML += html10;
+
+</script>
+
+<script>
+  renderMathInElement(document.body);
+</script>
+</body>
+</html>

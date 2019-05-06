@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ICS 332 - Module 12 (Introduction to Distributed Computing)</title>
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<a href="../index.html">Back to Home Page</a>
+<i>This note was last edited on May/05/2019 09:01 PM</i>
+
+<div id="target"></div>
+<script>
+  const converter = new showdown.Converter();
+  const note = '\n' +
+      '\n' +
+      '# 12. Introduction to Distributed Computing\n' +
+      '## Distributed Computing Issue #1: Correctness\n' +
+      '* Goal: Design an algorithm so that multiple processes accomplish a common goal **correctly**\n' +
+      '      * By exchanging the right messages at the right times\n' +
+      '* We need an algorithm that each process runs, that terminates, and that is correct\n' +
+      '* We could design a **centralized** system: there is a special process that knows about all other processes (e.g., some server running somewhere)\n' +
+      '      * Easy algorithm: just ask the special process who the leader should be\n' +
+      '* But centralized systems have problems (e.g., what if the special process fails???)\n' +
+      '* So we need a **distributed** algorithm...\n' +
+      '* If every process in the system knows about all other processes it’s easy: pick the process with the lowest ID as\n' +
+      'the leader!\n' +
+      '* But typically, **processes don’t know the full picture** \n' +
+      '      * The full picture is too big\n' +
+      '      * The full picture changes all the time\n' +
+      '* In general, maintaining global knowledge about the system doesn’t scale\n' +
+      '​\n' +
+      '## Distributed Computing Issue #2: Fault-Tolerance\n' +
+      '* When you write a program that runs on a single computer, and that computer crashes, you declare it a catastrophe that’s not your fault\n' +
+      '* But a (good) distributed program should handle its processes unexpectedly dying/disappearing because that’s a common occurrence at large scale\n' +
+      '* **First Question**: how do you detect failures?\n' +
+      '      * A process hasn’t answered for a while... Is is dead?\n' +
+      '      * Or is this just a temporary network problem and it will\n' +
+      '      come back?\n' +
+      '      * How long do I wait for?\n' +
+      '      * And then if I’ve created a replacement process and that\n' +
+      '      other process comes back, what do I do?\n' +
+      '* **Second Question**: how do you handle failures?\n' +
+      '* Perhaps you can duplicate processes, so that if one fails the other one survives\n' +
+      '* But then these processes must be in perfect synchrony, which may be impossible, especially over a network\n' +
+      '* Or you have a clever algorithm that adapts to failures gracefully, but that’s difficult\n' +
+      '* You can probably envision how hard this is!\n' +
+      '* Bottom Line: When you add failures into the mix, things are even more difficult\n' +
+      '​\n' +
+      '## Distributed Computing Issue #3: Performance\n' +
+      '* Say you want to perform a big/long computation with a lot of data\n' +
+      '* You then ”enlist” computers and databases\n' +
+      '      * You have some data on your laptop\n' +
+      '      * There is some data in various databases on-line\n' +
+      '      * You have accounts on compute and storage machines in various places\n' +
+      '      * All interconnected via the network\n' +
+      '* Problem: It’s not because you throw a bunch of hardware resources at your application that it will go faster\n' +
+      '      * Networks are not infinitely fast\n' +
+      '      * Not all computers are equal\n' +
+      '      * Computation cannot run without data\n' +
+      '      * Perhaps using a fast, but too remote computer, is not worth it\n' +
+      '* Bottom Line: You have to orchestrate data transfers and computations carefully to get good performance\n' +
+      '      * These are ”parallel computing” problems that people in HPC (High Performance Computing) study\n' +
+      '​\n' +
+      '​\n';
+  const html = converter.makeHtml(note);
+  const target = document.getElementById('target');
+  target.innerHTML = html;
+</script>
+
+<script>
+  renderMathInElement(document.body);
+</script>
+</body>
+</html>
