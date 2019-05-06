@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ICS 332 - Module 9 (Dynamic Linking and Loading)</title>
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<a href="../index.html">Back to Home Page</a>
+<i>This note was last edited on May/06/2019 06:48 PM</i>
+
+<div id="target"></div>
+<script>
+  const converter = new showdown.Converter();
+  const note = '\n' +
+      '\n' +
+      '# 9. Main Memory: Dynamic Linking and Loading\n' +
+      '## Smaller Address Space\n' +
+      'Three common-place techniques for achieving smaller address spaces:\n' +
+      '* Dynamic Memory Allocation\n' +
+      '      * Ask programs to tell the OS exactly how much memory they need (malloc, new) so that we don\'t always allocate the maximum allowed RAM to each process\n' +
+      '* Dynamic Loading\n' +
+      '* Dynamic Linking\n' +
+      '​\n' +
+      '## Dynamic Loading\n' +
+      '* **Dynamic loading**: only load code/text when it’s needed\n' +
+      '* Dynamic loading is the **programmer responsibility** (The OS is not involved)\n' +
+      '* Supported in all (decent) programming languages / OSes:\n' +
+      '* Note: We talk of dynamic loading but not of static loading (the\n' +
+      'default behavior)\n' +
+      '​\n' +
+      '## Static / Dynamic Linking\n' +
+      '* Static Linking is the historical way of reusing code\n' +
+      '* Add the assembly code of useful functions (printf...) collected in an **archive** or **library** to your own executable.\n' +
+      '* Issue 1: Large text\n' +
+      '* Issue 2: Some code is (very likely) duplicated in memory\n' +
+      '* Key idea: Why not share text (i.e., code) between processes in a similar way as data can be shared through shared memory?\n' +
+      '​\n' +
+      '### Dynamic Linking\n' +
+      '* **The OS is in charge of loading the code** (but the OS needs to be told where to load it at compile time)\n' +
+      '* The code is shared in **shared libraries**\n' +
+      '      * libc.so for Linux (so = shared object)\n' +
+      '      * MSVCRT.DLL for WIndows (DLL = Dynamic-link Library)\n' +
+      '      \n' +
+      '## Shared Libraries\n' +
+      '* When dynamic linking is enabled, the linker just puts a **stub** in the binary for each shared library routine reference\n' +
+      '* That **stub** is a piece of code that:\n' +
+      '      * checks whether the routine is loaded in memory\n' +
+      '      * if not, then loads it into memory “shared” (with all processes)\n' +
+      '      * then replaces itself with a simple call to the routine (it’s self-modifying code!)\n' +
+      '      * future calls will be “for free”\n' +
+      '* This is how you can update your system and not have to recompile all your executables\n' +
+      '* Shared libraries can also be replaced by a new one by overriding it\n' +
+      '​\n' +
+      '## Conclusion\n' +
+      '* Making address spaces as small as possible is thus a good idea\n' +
+      '      * Won\'t have to swap as much\n' +
+      '      * Not as costly to swap when swapping is needed\n' +
+      '* Part of this is developer\'s responsibility:\n' +
+      '      * Using space-efficient data structures\n' +
+      '      * Use Dynamic Memory Allocation\n' +
+      '* Part of this is provided by languages/compilers/OS\n' +
+      '      * Dynamic loading\n' +
+      '      * Dynamic linking\n';
+  const html = converter.makeHtml(note);
+  const target = document.getElementById('target');
+  target.innerHTML = html;
+</script>
+
+<script>
+  renderMathInElement(document.body);
+</script>
+</body>
+</html>
