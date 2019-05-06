@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ICS 332 - Module 11 (Page Faults and Replacement Part 2)</title>
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<a href="../index.html">Back to Home Page</a>
+<i>This note was last edited on May/06/2019 09:00 AM</i>
+
+<div id="target"></div>
+<script>
+  const converter = new showdown.Converter();
+  const note = '# 11. Page Faults and Replacement (Part 2)\n' +
+      '## Policies\n' +
+      '* The **Page Replacement Policy**: how to pick victims?\n' +
+      '* The **Frame Allocation Policy**: how many frames to each process?\n' +
+      '* Main goal: minimize page faults\n' +
+      '* Contrasting with CPU:\n' +
+      '      * CPU Scheduling - CPU is so fast that the decisions have to be made very quickly (simple algorithms)\n' +
+      '      * Memory Scheduling - Disk is so slow that it is worth spending some time to make a decision (more complicated algorithms)\n' +
+      '      \n' +
+      '### Page Replacement Problem\n' +
+      '* A set of page references\n' +
+      '* A number of available frames allocated to the process\n' +
+      '* Objective: minimize number of page faults\n' +
+      '\n' +
+      '#### Optimal Algorithm\n' +
+      '* **Evict the page that will not come in use for the longest time**\n' +
+      '\n' +
+      '![](@attachment/ics332-11-4.png)\n' +
+      '\n' +
+      '#### FIFO Algorithm\n' +
+      '* **Kick out the oldest page brought to memory**\n' +
+      '* Problem: An old page may be used all the time\n' +
+      '* So it is likely better to keep track of when a page was last used (LRU)\n' +
+      '\n' +
+      '![](@attachment/ics332-11-5.png)\n' +
+      '\n' +
+      '#### LRU Algorithm\n' +
+      '* **Evict the Least Recently Used (LRU) page**\n' +
+      '* Generally considered a good algorithm\n' +
+      '\n' +
+      '![](@attachment/ics332-11-6.png)\n' +
+      '\n' +
+      '* How to implement LRU:\n' +
+      '      * Use Counters - but this results in high-overhead\n' +
+      '      * Use a stack - but this results in the victim always at the bottom of the track and pointer shuffling\n' +
+      '* If the hardware does not provide any dedicated component, overhead to do anything other than FIFO is too expensive\n' +
+      '* **OSes do not implement LRU**\n' +
+      '* But the hardware usually provides a **reference bit**\n' +
+      '      * Associated to each entry in each page table entry\n' +
+      '      * Set to 1 by the hardware when the page is referenced\n' +
+      '      * Settable to 0 by the OS\n' +
+      '      \n' +
+      '#### Approximating LRU: Clock Algorithm\n' +
+      '* One can do **approximate LRU** using the reference bit\n' +
+      '* What OSes do: The Clock Algorithm algorithm\n' +
+      '* Key idea: use one reference bit per frame\n' +
+      '* Whenever a page is referenced by the program, set its entry’s reference bit to 1\n' +
+      '* When a page in a frame needs to be evicted:\n' +
+      '      * If the reference bit is 1, set it to 0, and move the queue head to the next item in the queue\n' +
+      '      * If the reference bit is 0, evict the page in that frame\n' +
+      '* A page in a frame that keeps on being referenced is never evicted (its reference bit is always 1)\n' +
+      '\n' +
+      '![](@attachment/ics332-11-7.png)\n' +
+      '\n' +
+      '![](@attachment/ics332-11-8.png)\n' +
+      '\n' +
+      '## Global/Local Page Replacement\n' +
+      '* **Local Replacement**: Victim among the process pages\n' +
+      '      * Limits the number of frames per process\n' +
+      '* **Global Replacement**: Any victim can be selected\n' +
+      '      * Good for high-priority processes\n' +
+      '      * Performance of one process depends on other processes\n' +
+      '* Global is generally used: simple and increases system throughput\n' +
+      '* So yes, your process could lose pages because my process is page-faulting!\n' +
+      '\n' +
+      '## Frame Allocation Algorithms\n' +
+      '* **The Frame Allocation Problem**: How many frames should be given to a process?\n' +
+      '* Maximum number of frames: The physical memory\n' +
+      '\n' +
+      '#### Policies\n' +
+      '* **Fair Allocation**: m frames, n processes ⇒ Give each process m/n frames\n' +
+      '* **Proportional Allocation**: if s_i is the size of a process (and S = \\\\( \\sum_i s_i \\\\) is the total size), give s_i/S × m frames\n' +
+      '* **Priority allocation**: tweak the above with priority\n' +
+      '\n' +
+      '## Thrashing\n' +
+      '* Phenomenon observed on systems with a global page replacement policy and a high-level of multi-programming (many processes) using the whole memory\n' +
+      '* A process needs more frames ⇒ Page-fault rate increases\n' +
+      '* It takes frames away from other processes ⇒ Increasing their page-fault rates\n' +
+      '* These processes are moved from the ready queue to the waiting one (since they are waiting for the disk)\n' +
+      '* The CPU utilization decreases\n' +
+      '* Which is good for the CPU scheduler: It can start new processes\n' +
+      '* which request memory frames\n' +
+      '* and are sent to the waiting queue\n' +
+      '* ... No work gets done: each process is waiting for pages\n' +
+      '* This is called **thrashing**\n' +
+      '* Note the **paradox**: To increase the CPU utilization the multi-programming level must be reduced\n' +
+      '\n' +
+      '### Thrashing Prevention\n' +
+      '* Working Set Strategy:\n' +
+      '        * Observe the pages referenced by each process (called the working set)\n' +
+      '        * When the sum of the sizes of all working sets gets greater than the number of memory frames, swap out an entire process and recover its frames\n' +
+      '        * Hence no thrashing (but one very unhappy process)\n' +
+      '* Page-Fault Frequency Strategy:\n' +
+      '      * Monitor the page-fault rate for each process\n' +
+      '      * If the rate is above some (fixed) upper bound, give the process another frame\n' +
+      '      * If the rate is below some (fixed) lower bound, take a frame from the process\n' +
+      '      * If a process requests a new frame but none is available: swap it out\n' +
+      '* Thrashing and swapping are often use interchangeably. *Formally though thrashing is the problem and swapping is the solution.*\n' +
+      '\n' +
+      '## Memory-Mapped Files\n' +
+      '* Data files can be virtualized the same way, i.e., by mapping them to memory\n' +
+      '* **Memory mapping**\n' +
+      '      * Map disk block(s) to a memory frame(s)\n' +
+      '      * Initial access is expensive (and generates page faults)\n' +
+      '      * Subsequent access is made in memory (and cheap-er)\n' +
+      '      * The on-disk file may be updated at a convenient time, upon closing...\n' +
+      '      * Memory mapping is performed by dedicated system calls (mmap)\n' +
+      '      * Potential concurrency issues: multiple processes can map the same file concurrently\n' +
+      '\n' +
+      '![](@attachment/ics332-11-9.png)\n' +
+      '\n' +
+      '* To access I/O devices, set aside ranges of memory addresses\n' +
+      '* Loads/Stores to these addresses cause interaction with the device\n' +
+      '\n' +
+      '## Conclusion\n' +
+      '* An address space is a bunch of non-contiguous pages (but virtualized as a big slab)\n' +
+      '* Process Address Spaces can only be partially in memory\n' +
+      '* Main issues:\n' +
+      '      * Page Replacement Policy\n' +
+      '      * Frame Allocation Policy\n' +
+      '* Thrashing is bad\n' +
+      '* Memory-Mapping is useful';
+  const html = converter.makeHtml(note);
+  const target = document.getElementById('target');
+  target.innerHTML = html;
+</script>
+
+<script>
+  renderMathInElement(document.body);
+</script>
+</body>
+</html>
