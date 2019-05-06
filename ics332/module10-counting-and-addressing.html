@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ICS 332 - Module 10 (Counting and Addressing)</title>
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<a href="../index.html">Back to Home Page</a>
+<i>This note was last edited on May/06/2019 07:00 AM</i>
+
+<div id="target"></div>
+<script>
+  const converter = new showdown.Converter();
+  const note = '# 10. Counting and Addressing\n' +
+      '## Units of Storage\n' +
+      '* 1 Byte = 8 bits\n' +
+      '* 1 KiB = \\\\( 2^{10} \\\\) Byte = 1,024 bytes\n' +
+      '* 1 MiB = \\\\( 2^{10} \\\\) KiB = \\\\( 2^{20} \\\\) bytes ( 1 Million) (mega)\n' +
+      '* 1 GiB = \\\\( 2^{10} \\\\) MiB = \\\\( 2^{30} \\\\) bytes ( 1 Billion) (giga)\n' +
+      '* 1 TiB = \\\\( 2^{10} \\\\) GiB = \\\\( 2^{40} \\\\) bytes ( 1 Trillion) (tera)\n' +
+      '* 1 PiB = \\\\( 2^{10} \\\\) TiB = \\\\( 2^{50} \\\\) bytes ( 1,000 Trillion) (peta)\n' +
+      '* 1 EiB = \\\\( 2^{10} \\\\) PiB = \\\\( 2^{60} \\\\) bytes ( 1 Million Trillion) (exa)\n' +
+      '\n' +
+      '## Exponents, Logarithms\n' +
+      '* \\\\( 2^x \\cdot 2^y = 2^{x+y} \\\\)\n' +
+      '* \\\\( 2^{-x} = \\frac{1}{2^x}\\\\)\n' +
+      '* \\\\( 2^x / 2^y = 2^{x-y} \\\\)\n' +
+      '* \\\\( log_{2}2^n = n\\\\)\n' +
+      '\n' +
+      '## Addressing\n' +
+      '* How many groups of *x* thingies are there in a set of *y* thingies? **y / x**\n' +
+      '* We often partition thingies into chunks\n' +
+      '* After partitioning, we need to **address** the chunks\n' +
+      '* Addressing means to refer to something using a name/number\n' +
+      '* **If you have \\\\( 2^n \\\\) thingies, then you need *n*-bit addresses to address the thingies**';
+  const html = converter.makeHtml(note);
+  const target = document.getElementById('target');
+  target.innerHTML = html;
+</script>
+
+<script>
+  renderMathInElement(document.body);
+</script>
+</body>
+</html>
