@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ICS 332 - Module 11 (Page Faults and Replacement)</title>
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<a href="../index.html">Back to Home Page</a>
+<i>This note was last edited on May/06/2019 08:29 AM</i>
+
+<div id="target"></div>
+<script>
+  const converter = new showdown.Converter();
+  const note = '# 11. Page Faults and Replacement\n' +
+      '## Demand Paging\n' +
+      '* The way in which the OS allocates pages to a process is called **Demand Paging**\n' +
+      '* “Don’t load a page before the process references it”\n' +
+      '      * Initially just load one page, the one with the first instruction of the program\n' +
+      '      * Each time the program issues an address, load the corresponding page if not already loaded\n' +
+      '* This is a “lazy” scheme, as opposed to the “eager” scheme that would load all pages at once\n' +
+      '* For each page, the OS keeps track of whether it is in RAM or not\n' +
+      '* This is done using the valid bit of the page table entries\n' +
+      '      * A page is marked as valid if it is legal and in memory\n' +
+      '      * A page is marked as invalid if it is illegal or on disk\n' +
+      '      * Initially all pages are marked invalid\n' +
+      '* During address translation, if the bit is invalid, a **trap** is generated: a **page fault**\n' +
+      '\n' +
+      '## Page Faults\n' +
+      '* When the CPU issues an address, first one determines whether it’s legal or not\n' +
+      '* Lookup the valid bit in the page table entry\n' +
+      '* If the valid bit is set, do the address translation as usual\n' +
+      '* If not:\n' +
+      '      * Find a free frame (from the list of free frames in the kernel)\n' +
+      '      * Schedule the disk access to load the page into the frame\n' +
+      '      * Kick the process off the CPU and put it the blocked/waiting state\n' +
+      '      * Once the disk access is complete, update the process page table with the new logical/physical memory mapping\n' +
+      '      * Update the valid bit\n' +
+      '      * Rerun the instruction that caused the trap\n' +
+      '      * Set the process state to Ready (it should then run soon)\n' +
+      '      \n' +
+      '      \n' +
+      '## Rerun the "offending" instruction\n' +
+      '* If the page fault was because the instruction could not be fetched: (1) load the page, then (2) rerun the instruction from scratch\n' +
+      '* If the page fault was because an operand value could not be read from memory: Do the same sequence\n' +
+      '* If the trap been was issued because an operand value could not be written to memory: Do the same sequence\n' +
+      '* In all cases: just re-run the instruction from scratch\n' +
+      '\n' +
+      '## Virtual Memory Performance\n' +
+      '\n' +
+      '![](@attachment/ics332-11-1.png)\n' +
+      '\n' +
+      '![](@attachment/ics332-11-2.png)\n' +
+      '\n' +
+      '**The page fault rate must be kept as small as possible**\n' +
+      '\n' +
+      'What can be done?\n' +
+      '* Increase the memory size\n' +
+      '* Limit the size of the process address space\n' +
+      '* Tell programmers to develop programs with small address spaces ⇒ That’s your job! (every time you use more ram, you increase your\n' +
+      'page fault probability, and thus slow down your program)\n' +
+      '\n' +
+      '#### Back to fork()-exec()\n' +
+      '* We have said that fork() makes a copy of the parent process address space to create an identical child process\n' +
+      '* But most of the time exec() is used in the child to run another program\n' +
+      '\n' +
+      '![](@attachment/ics332-11-3.png)\n' +
+      '\n' +
+      '### Copy-on-Write\n' +
+      '* During a fork(), don’t copy the address space and initially share all pages\n' +
+      '      * Save for some heap and stack pages, that are necessary for any new process\n' +
+      '* Whenever the parent or the child modifies a page, then copy it\n' +
+      '* This “lazy” scheme is used in all OSes (Windows, Mac, Linux)\n' +
+      '* In the fork-exec classical example, no page is copied!\n' +
+      '\n' +
+      '## Page Replacement\n' +
+      '* Virtual Memory increases multi-programming and provides the illusion of large address spaces\n' +
+      '* What if we run out of memory?\n' +
+      '      * A page fault occurs\n' +
+      '      * Oh no, the free-frame list is empty!!\n' +
+      '* *We need to kick a page out of RAM*; This is called **page replacement**\n' +
+      '      * **Evict** a **victim** page from a frame (Write it to the disk if necessary)\n' +
+      '      * Put the newly needed page into that frame\n' +
+      '* Page replacement may thus require two page transfers\n' +
+      '\n' +
+      '## Dirty Bit\n' +
+      '* **No need to write a victim back to disk if that victim has never been modified**\n' +
+      '* For this reason, each page table entry has a dirty bit\n' +
+      '* This dirty bit is initially set to 0\n' +
+      '* Whenever the process writes to the page, that dirty bit is set to 1\n' +
+      '* If a page is evicted, it’s written to disk only if its **dirty**\n' +
+      '* Most OSes do opportunistic un-dirtying: If the disk is idle pick a dirty page, write it out and clear its dirty bit\n' +
+      '\n' +
+      '## Conclusion\n' +
+      '* At this point we have *mechanisms*\n' +
+      '      * We can bring pages in from disk on demand (when page fault)\n' +
+      '      * We can write pages to disk when needed (RAM is full)\n' +
+      '      * The dirty bit is used to avoid doing redundant writes to disk\n' +
+      '* What we need are *policies*\n' +
+      '* The main questions are: Which pages do we kick back to disk? and How many frames do we let a process have?';
+  const html = converter.makeHtml(note);
+  const target = document.getElementById('target');
+  target.innerHTML = html;
+</script>
+
+<script>
+  renderMathInElement(document.body);
+</script>
+</body>
+</html>
