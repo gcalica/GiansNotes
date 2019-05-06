@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ICS 332 - Module 11 (Paging Issues and Solutions)</title>
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<a href="../index.html">Back to Home Page</a>
+<i>This note was last edited on May/06/2019 09:18 AM</i>
+
+<div id="target"></div>
+<script>
+  const converter = new showdown.Converter();
+  const note = '# 11. Paging Issues and Solutions\n' +
+      '## Paging Problems\n' +
+      '* **Paging has extra overhead**\n' +
+      '* **Page tables can be very large**\n' +
+      '* **Address translation** (from virtual to physical) has to be performed for EVERY address issued by the CPU\n' +
+      '* The page table is in RAM, and it will be accessed very frequently\n' +
+      '* When a new process is dispatched to the CPU, the dispatcher loads a special register with the address of the beginning of the process’s page table: the **Page Table Base Register (PTBR)**\n' +
+      '      * This makes it fast to switch between page tables at each context switch\n' +
+      '      * This does not speed up translation though\n' +
+      '* In fact, the **memory access time is doubled**: 1) Access an entry in the page table; 2) Based on that entry access the physical address\n' +
+      '\n' +
+      '## Locality and Caching\n' +
+      'However!\n' +
+      '* **Temporal locality**: repeated access to the same memory location\n' +
+      '      * e.g., counter += f(1, alpha, beta)\n' +
+      '* **Spatial locality**: repeated access to nearby memory locations\n' +
+      '      * e.g., a[i] = a[i-1] + a[i-2]\n' +
+      '* We **REMEMBER (cache)** previous translation results\n' +
+      '\n' +
+      '## Translation Lookaside Buffer (TLB)\n' +
+      '* Caching of previous translations is done by a hardware component called the **Translation Lookaside Buffer (TLB)**\n' +
+      '        * Each entry in the TLB is a <key, value> pair\n' +
+      '        * You give it a key\n' +
+      '        * The key is compared in parallel with all stored keys\n' +
+      '        * If the key is found, then the associated value is returned\n' +
+      '* TLB characteristics:\n' +
+      '        * Contains 12 to 4,096 entries\n' +
+      '        * Performance:\n' +
+      '        * On hit: less than 1 clock cycle\n' +
+      '        * On miss: 10-100 clock cycles\n' +
+      '        * Miss rate: 0.01 - 1%\n' +
+      '* A *replacement policy* must be defined when TLB is full\n' +
+      '\n' +
+      '### TLB and Context-Switches\n' +
+      '* What happens with the TLB on a context-switch?\n' +
+      '      * Wipe the TLB clean?\n' +
+      '      * VPN 7 of process A is not the same in the same frame as VPN of process B\n' +
+      '      * Called a “TLB flush”\n' +
+      '      * But perhaps unnecessary aggressive (the two processes could happily share the TLB)\n' +
+      '      * So your *machine doesn’t do TLB flushes*\n' +
+      '* ASIDs: **Address-Space IDentifiers**\n' +
+      '      * Each TLB entry is annotated with a process identifier\n' +
+      '      * The TLB can contain entries associated to multiple processes (kernel code, shared libraries, multi-threaded program, ...)\n' +
+      '      * Each lookup attempts to match entry ASIDs with the ASID of the current process (and if mismatch then it’s a TLB miss)\n' +
+      '      \n' +
+      '## Page Table Entries and Structure\n' +
+      '\n' +
+      '![](@attachment/ics332-11-10.png)\n' +
+      '\n' +
+      '* The page table **is just an array of entries*\n' +
+      '* Looking up the entry for page *i* means: PTBR + i x entry size\n' +
+      '\n' +
+      '## Page Table Size\n' +
+      '* To avoid big slabs of RAm we needed big slabs of RAM because we used **contigious** RAM space\n' +
+      '* What do we do when we have big slabs of RAM? We split them into pages!\n' +
+      '\n' +
+      '**Continue studying from page 52**\n' +
+      '\n' +
+      '## Conclusion\n' +
+      '* Problem #1: Address translation is slow\n' +
+      '      * Solution: Use a TLB\n' +
+      '* Problem #2: The Page Table shouldn’t be contiguous\n' +
+      '      * Solution: Use a hierarchical structure\n' +
+      '      * The hierarchical structure makes translation slower, but we don’t case because we have a TLB anyway!';
+  const html = converter.makeHtml(note);
+  const target = document.getElementById('target');
+  target.innerHTML = html;
+</script>
+
+<script>
+  renderMathInElement(document.body);
+</script>
+</body>
+</html>
