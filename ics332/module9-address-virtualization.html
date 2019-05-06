@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ICS 332 - Module 9 (Address Virtualization)</title>
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<a href="../index.html">Back to Home Page</a>
+<i>This note was last edited on May/05/2019 10:28 PM</i>
+
+<div id="target"></div>
+<script>
+  const converter = new showdown.Converter();
+  const note = '# 9. Main Memory: Address Virtualization\n' +
+      '## Address Virtualization\n' +
+      '* Main Memory = **Memory Unit** (in Von Neumann model)\n' +
+      '      * (Large) contiguous array of bytes/words, each with its own address\n' +
+      '      * Stream of addresses coming in on the **memory bus**\n' +
+      '      * Each incoming address is stored in the memory-address register of the memory unit\n' +
+      '      * Which causes the memory unit to put the content at that address on the memory bus\n' +
+      '      * And that content is then read in by the CPU\n' +
+      '* Called the “Main” memory by contrast with registers, caches, which are all managed 100% by the hardware\n' +
+      '* **Processes share the main memory, therefore the OS must manage the main memory**\n' +
+      '* The CPU only works with registers, but it can **issue addresses** that correspond to words of the main memory via *load/store instructions*\n' +
+      '\n' +
+      '## Contiguous Memory Allocation - Early Systems\n' +
+      '* Let\'s assume what we have always assumed so far: each process is allocated a *contiguous* zone of physical memory\n' +
+      '\n' +
+      '![](@attachment/ics332-9-1.png)\n' +
+      '\n' +
+      '![](@attachment/ics332-9-2.png)\n' +
+      '\n' +
+      '## Address Binding\n' +
+      '* One important question is that of **address binding**: *when are physical addresses determined for bytes of data/instruction*?\n' +
+      '* Consider the following program:\n' +
+      '\n' +
+      '![](@attachment/ics332-9-3.png)\n' +
+      '\n' +
+      '* WHen is the address of where *a* is located determined/fixed?\n' +
+      '* When is the address of the instruction to which to jump in case a is\n' +
+      'zero?\n' +
+      '\n' +
+      '### Absolute Addressing\n' +
+      '\n' +
+      '![](@attachment/ics332-9-4.png)\n' +
+      '\n' +
+      '* The assembler transofmrs the assembly code into a binary executable\n' +
+      '* One approach to address binding is to use **absolute addressing** so that the binary executable contains physical addresses:\n' +
+      '\n' +
+      '![](@attachment/ics332-9-5.png)\n' +
+      '\n' +
+      '#### Problems of Absolute Addressing\n' +
+      '* Absolute addressing is simple, but it has **not** been used in decades\n' +
+      '* **With absolute addressing a program must be loaded exactly at the same place into memory each time we run it**\n' +
+      '* Therefore, we may not be able to run a program because another program is running and encoraches on the address range.\n' +
+      '* **Corollary: We cannot run multiple instances of a single program!**\n' +
+      '* One solution is to recompile a program each time you need to run it\n' +
+      '      * Because only when you\'re about to run a program can you know where it should fit in memory\n' +
+      '      * But this has problems: while you\'re recompiling it, somebody else starts another program and that program takes 1 hour to compile\n' +
+      '* **Bottom line: absolute addressing is not a good idea**\n' +
+      '\n' +
+      '### Relative Addressing\n' +
+      '* We can solve the problem of absolute addressing with a very simple idea called **relative addressing**\n' +
+      '* Assume the address space starts at some **BASE address**, and computes all addresses as an **offset** from the BASE\n' +
+      '* The code is now completely **relocatable**: Only the BASE needs to be determined before running it\n' +
+      '* The same program can be run anywhere in memory (at whatever BASE address)\n' +
+      '* Multiple instances can run, each with a different BASE address\n' +
+      '\n' +
+      '## Memory Virtualization\n' +
+      '* From the process’ point of view, the address space starts at 0\n' +
+      '* All addresses in the process address space are expressed as an **offset relative** to the **base** value\n' +
+      '* The process address space has been **virtualized**\n' +
+      '* An address in the **physical memory** is called a **physical address**\n' +
+      '* The address manipulated by the **CPU** is a **logical address** or a virtual address (both terms are used)\n' +
+      '* A program references a **logical address space**, which corresponds to a **physical address space** in the memory\n' +
+      '* However “something” needs to tell the CPU how to translate from virtual to physical addresses, i.e., some **address translation** mechanism\n' +
+      '\n' +
+      '## Virtualizing the process address space\n' +
+      '* Some hardware component needs to **translate** virtual addresses into physical addresses\n' +
+      '* *Address translation happens very frequently (each load, store, jump)*\n' +
+      '* Therefore: The BASE Address is accessed very frequently\n' +
+      '      * The memory translation component should store it in a register or something as fast as a register\n' +
+      '* And: Offsets are added to the BASE address very frequently\n' +
+      '* Furthermore: It would be nice if only valid logical addresses were translated\n' +
+      '      * For **memory protection**: we still don’t want processes to step on each other’s toes\n' +
+      '* So we use a **limit register** that stores the largest possible logical address\n' +
+      '* Conclusion: This component must be a specialized, super fast **hardware** component\n' +
+      '\n' +
+      '## Memory Management Unit\n' +
+      '* That component that translates virtual addresses into physical addresses is named the **Memory Management Unit (MMU)** which is nowadays integrated with the CPU\n' +
+      '\n' +
+      '![](@attachment/ics332-9-6.png)\n' +
+      '\n' +
+      '## Summary of Address Virtualization\n' +
+      '* Your program generates only **logical** addresses between 0 and some upper bound (the limit)\n' +
+      '* Each such address is **checked** to see if it’s beyond the limit\n' +
+      '* If not, then the address is **translated** (just add it to the base)\n' +
+      '* That translated **physical address** is then sent to the memory bus\n' +
+      '* Bottom line: *your CPU only “sees” logical addresses, your RAM only “sees” physical addresses*\n' +
+      '\n' +
+      '## Segmentation\n' +
+      '* **Segmentation** is avoiding waste by breaking up the address space into pieces (each piece has its own base/limit register)\n' +
+      '* The logical address space is now a collection of segments\n' +
+      '\n' +
+      '### Segment Table\n' +
+      '* A **segment table** with one entry per segment number is used to keep track of segments\n' +
+      '* For each segment, its entry stores:\n' +
+      '      * Base: Starting address of the segment\n' +
+      '      * Limit: Length of the segment\n' +
+      '* **The segment table is stored in memory**\n' +
+      '      * A Segment-Table Base Register (STBR): Points to the segment table address\n' +
+      '      * A Segment-Table Length Register (STLR): Gives the length of the segment table, Makes it easy to detect an invalid segment offset\n' +
+      '      * These registers are saved/restored at each context switch\n' +
+      '      \n' +
+      '### Memory Management Unit and Segmentation\n' +
+      '* Implementing Segmentation is easy, Reserve bits (e.g., the left-most ones) in the logical address to reference a segment (**the segment bits**)\n' +
+      '* Lookup the segment table (not shown on the picture) to find out the segment’s base/limit values\n' +
+      '\n' +
+      '![](@attachment/ics332-9-7.png)\n' +
+      '\n' +
+      '## Conclusion\n' +
+      '* Main concept: the CPU sees logical addresses, and the MMU transforms them into physical addresses\n' +
+      '      * Determines the segment\n' +
+      '      * Lookup the segment table to find the segment’s base and limit\n' +
+      '      * Check that the logical address is within the limit\n' +
+      '      * Add the base to it\n';
+  const html = converter.makeHtml(note);
+  const target = document.getElementById('target');
+  target.innerHTML = html;
+</script>
+
+<script>
+  renderMathInElement(document.body);
+</script>
+</body>
+</html>
