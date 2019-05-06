@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ICS 332 - Module 9 (Main Memory: Swapping)</title>
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<a href="../index.html">Back to Home Page</a>
+<i>This note was last edited on May/05/2019 10:42 PM</i>
+
+<div id="target"></div>
+<script>
+  const converter = new showdown.Converter();
+  const note = '# 9. Main Memory: Swapping\n' +
+      '## Swapping\n' +
+      '* Moving processes back and forth between main memory and the disk is called **swapping**\n' +
+      '* When a process is swapped back in, it may be put into the same physical memory space *or not*\n' +
+      '* With swapping a process can “be in RAM” or “be on Disk”\n' +
+      '* Therefore, a context-switch can involve the disk (goes from fast to super slow)\n' +
+      '\n' +
+      '### Swapping and DMA\n' +
+      '* With swapping, at any time the OS could kick a process out of RAM and save it to disk\n' +
+      '* This raises a concern with Direct Memory Access (DMA)\n' +
+      '      * Reminder: with DMA a process says to the system “while I am doing other things please have the memory system do some memory copy without my involvement”\n' +
+      '* Consider a process that has initiated a DMA operation and is swapped to disk\n' +
+      '* The DMA controller may have no idea and happily continues to write data (into some other process’ address space, which has replaced that of the one that was swapped out!)\n' +
+      '* Operating systems must deal with this (because DMA is so useful we can’t leave without it)\n' +
+      '\n' +
+      '#### Bad news about swapping\n' +
+      '* The disk is **super slow** (even if its an SSD)\n' +
+      '* One approach is to just **not swap** (it is often disabled in laptops)\n' +
+      '* A key solution is to not swap whole address spaces ("paging")\n' +
+      '\n' +
+      '#### Where are we?\n' +
+      '* We now have a whole bunch of *mechanisms*:\n' +
+      '      * We know how to give each process a “slab” of memory or one slab per segment\n' +
+      '      * We know how to control access to that memory\n' +
+      '      * We know how to reduce address spaces\n' +
+      '      * We know how to swap processes in and out of memory\n' +
+      '* We now need a *policy* to decide how to place each slab in memory:\n' +
+      '      * We want to have as many process address spaces in memory as possible\n' +
+      '      * We want to minimize swapping\n' +
+      '      \n' +
+      '## Memory Partitioning\n' +
+      '* Main question: Where should the processed be placed in memory?\n' +
+      '* The kernel must keep a list of available memory regions or “holes”\n' +
+      '* When a process arrives, before scheduling it, it is placed in a “I need memory” input queue\n' +
+      '* The kernel must make decisions:\n' +
+      '      * Pick a process from the input queue\n' +
+      '      * Pick a hole in which the process will be placed (and update the list of holes)\n' +
+      '* And then, the process can be placed in the ready queue\n' +
+      '* This problem is known as the **dynamic storage allocation problem**\n' +
+      '      * It’s an on-line problem (we don’t know the future)\n' +
+      '      * As opposed to off-line (we know the future)\n' +
+      '* **Objective: Hold as many processes in RAM as possible**\n' +
+      '\n' +
+      '![](@attachment/ics332-9-8.png)\n' +
+      '\n' +
+      '## Memory Allocation Strategies\n' +
+      '* Question 1/3: Which process should be picked?\n' +
+      '* Question 2/3: Which hole should be picked?\n' +
+      '      * First Fit? Pick the first hole that is big enough\n' +
+      '      * Best Fit? Pick the smallest hole that is big enough\n' +
+      '      * Worst Fit? Pick the biggest hole\n' +
+      '* Question 3/3: How should the picked process be placed in the picked hole? Top? Bottom? Middle?\n' +
+      '* What should we do?\n' +
+      '      * FCFS + First Fit + Top?\n' +
+      '      * Jump Ahead + Worst Fit + Bottom?\n' +
+      '      * The above combinations are **heuristics** that hopefully produce decent solutions\n' +
+      '* What we are trying to solve is an on-line (don\'t know the future) bin-packing (fit boxes in bins) dynamic (boxes can disappear) problem!\n' +
+      '\n' +
+      '## External Fragmentation\n' +
+      '* Our objective: hold as many processes as possible in memory\n' +
+      '* External fragmentation makes this difficult\n' +
+      '* Two small disjoint holes that together would have been big enough to accodomate a process\n' +
+      '* External fragmentation is defined as the number of holes\n' +
+      '* What about **compaction**?\n' +
+      '      * Just like defragging hard drives\n' +
+      '      * But moving processes around means a lot of slow memory copies\n' +
+      '      * No OS does it\n' +
+      '\n' +
+      '## Internal Fragmentation\n' +
+      '* When a process does not use a whole slab and some space is wasted\n' +
+      '\n' +
+      '![](@attachment/ics332-9-9.png)\n' +
+      '\n' +
+      '## Conclusion\n' +
+      '* Our objective was to allocate a contiguous slab of memory to each process (or to each process segment) so that their address spaces can be in RAM\n' +
+      '* The mechanisms are “easy”\n' +
+      '      * Relocatable code\n' +
+      '      * Segmentation for avoiding waste and enabling protection\n' +
+      '      * MMU for address virtualization at runtime\n' +
+      '* But finding a good policy is really hard\n' +
+      '      * For process picking, hole picking, placement in hole\n' +
+      '* It’s hard because fragmentation is unavoidable and wastes RAM\n' +
+      '* One way to make it less hard is to try to have small address spaces\n';
+  const html = converter.makeHtml(note);
+  const target = document.getElementById('target');
+  target.innerHTML = html;
+</script>
+
+<script>
+  renderMathInElement(document.body);
+</script>
+</body>
+</html>
